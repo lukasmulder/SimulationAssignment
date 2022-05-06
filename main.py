@@ -1,19 +1,23 @@
+from state import State
+from event import event_handler, Event
+
 """
-def init():
-    eventQ.append( arrival(Pois dist) )
-
-def main():
-    init
-    while eventQ not empty:
-        pop event
-        run event
-
 TODO:
 - event handler
-    -write event handling for arrival
-- write initialition function
-- write main function
+    -write generator for times (charging, leaving, arrival)
 - implement statistics
-- implement random number generation
 - make use of Poisson distribution
 """
+
+def main(run_time):
+    #initialition
+    eventQ = [Event(0, "arrival")]
+    state = State()
+
+    #main loop
+    while eventQ != [] and eventQ[0].time < run_time: #check if the queuue is not empty and if we have not exceeded the simulation time.
+        for event in eventQ:
+            print(event.type, eventQ[0].time)
+        event_handler(eventQ.pop(0), eventQ, state.parking, state.cables, state.network)
+
+main(20)
