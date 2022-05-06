@@ -23,6 +23,7 @@ class State:
                           , 7 : Parking(7, 50, 0.10)
                           }
                           
+        #is dit niet onnodig extra? de cables zitten al ingebouwd in het network
         self.cables =    { 0 : Cable(0, 200) #initializing all the cables with their correct values
                          , 1 : Cable(1, 200)
                          , 2 : Cable(2, 200)

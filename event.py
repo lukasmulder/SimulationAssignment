@@ -1,5 +1,9 @@
 
 from numpy.random import choice
+from state import *
+import random
+import math
+import csv
 
 class Event:
     def __init__(self, time, type,location=None):
@@ -34,31 +38,44 @@ def arrival(event, eventQ, parking, cables, network):
 
             #charge car
             parking[n].charging+=1
+            
             #update cables
-            updatecables(network,n)
+            for cable in network[n]:
+                cable.flow += 6 
 
+            ch,le = generate_time()
             #schedule finished charging
-            chargetime = currenttime + generate_time()[0]
+            chargetime = currenttime + ch
+            
             insert_event(Event(chargetime,"finished charging",n),eventQ)
 
             #schedule leave parking
-            leavetime = currenttime + generate_time()[1]
+            leavetime = currenttime + le
             insert_event(Event(leavetime,"leave parking",n),eventQ)
-
+            
             break
 
-    next_arrival_time = currenttime + 1
+    next_arrival_time = currenttime + 3
     insert_event(Event(next_arrival_time, "arrival"), eventQ)
 
-def updatecables(network,parking):
-    for cable in network[parking]:
-        cable.flow += 6
+def generate_arrival_time(currenttime):
+    rate = find_rate(currenttime) # this function should give the average number of cars in that hour
+    p = random.random()
+    arrival_time= -math.log(1 - p)/rate
+    return arrival_time
 
+def find_rate(currenttime):
+    # with open('arrival_hours.csv', newline="\n", delimiter= ";") as f:
+    #     reader = csv.reader(f)
+    #     data = list(reader)
+        
+    data = list(csv.reader(arrival_hours.csv, delimiter=";"))
+    return data
 
 def generate_time():
     #generates charging time and leaving time
-    a=1
-    b=10
+    a=2
+    b=4
     return (a,b)
 
 def chooseparking():
@@ -84,3 +101,6 @@ event_handler_dictionary = {
 
 def event_handler(event, eventQ, parking, cables, network):
     event_handler_dictionary[event.type](event, eventQ, parking, cables, network) #call the propert function according to the event type and the dictionary
+
+
+print(find_rate(1))
