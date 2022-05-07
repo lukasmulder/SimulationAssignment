@@ -11,11 +11,6 @@ class Cable:
         self.capacity = capacity #its maximum capacity
         self.flow = 0 #its current flow
 
-class Time:
-    def __init__(self,hour,min):
-        self.hour = hour
-        self.min = min
-
 class State:
     def __init__(self):
         self.parking =    { 1 : Parking(1, 60, 0.15) #initializing all the parking lots with the correct values
@@ -26,7 +21,7 @@ class State:
                           , 6 : Parking(6, 60, 0.10)
                           , 7 : Parking(7, 50, 0.10)
                           }
-                          
+
         #is dit niet onnodig extra? de cables zitten al ingebouwd in het network
         self.cables =    { 0 : Cable(0, 200) #initializing all the cables with their correct values
                          , 1 : Cable(1, 200)
