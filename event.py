@@ -30,7 +30,7 @@ def insert_event(event, eventQ):
     eventQ.insert(low, event)
 
 
-def arrival(event, eventQ, parking, cables, network, arrivalrates):
+def arrival(event, eventQ, parking, cables, network, csv):
     currenttime = event.time
     parkingchoices = chooseparking()
     for n in parkingchoices:
@@ -45,7 +45,7 @@ def arrival(event, eventQ, parking, cables, network, arrivalrates):
             for cable in network[n]:
                 cable.flow += 6 
 
-            ch,le = generate_time()
+            ch,le = generate_time(csv)
             #schedule finished charging
             chargetime = currenttime + ch
             
@@ -57,11 +57,12 @@ def arrival(event, eventQ, parking, cables, network, arrivalrates):
             
             break
 
-    next_arrival_time = generate_arrival_time(currenttime, arrivalrates)
+
+    next_arrival_time = generate_arrival_time(currenttime, csv)
     insert_event(Event(next_arrival_time, "arrival"), eventQ)
 
-def generate_arrival_time(currenttime,arrivalrates):
-    rate = (750*arrivalrates[int(currenttime/60)])/60 # this function should give the average number of cars in that hour
+def generate_arrival_time(currenttime,csv):
+    rate = (750*csv["arrival"][int(currenttime/60)])/60 # this function should give the rate of cars per minute
     p = random.random()
     arrival_time= -math.log(1 - p)/rate
     return currenttime + arrival_time
@@ -74,23 +75,32 @@ def import_from_csv(filename):
         
     return list(map(float, info))
 
-def generate_time():
+def normalize(list): #normalize a list
+    summ = sum(list)
+    return [i/summ for i in list]
+
+def generate_time(csv):
     #generates charging time and leaving time
-    a=2
-    b=4
-    return (a,b)
+    charging_size = choice(range(102), size = 1, replace = False, p=normalize(csv["charging"]))[0] #in kWh
+    standing_time = choice(range(71), size = 1, replace = False, p=normalize(csv["connection"]))[0] #in hours
+    
+    charging_time = charging_size/6
+    if charging_time > 0.7*standing_time: #check the 70% rule
+        standing_time = charging_time/0.7
+    
+    return (charging_time*60,standing_time*60)
 
 def chooseparking():
     #generates 3 parking spaces that will be picked radnomly
     #parking spaces can be the same vgm willen wij dat niet
     return choice([1,2,3,4,5,6,7], size = 3, replace = False, p=[0.15,0.15,0.15,0.2,0.15,0.1,0.1])
 
-def finished_charging(event, eventQ, parking, cables, network,arrivalrates):
+def finished_charging(event, eventQ, parking, cables, network,csv):
     loc = event.location #get the location where the car is parked
     for cable in network[loc]: #for every cable in the network that transports current to the car
         cable.flow -= 6 #reduce the flow by 6 kWh
 
-def leave_parking(event, eventQ, parking, cables, network,arrivalrates):
+def leave_parking(event, eventQ, parking, cables, network,csv):
     loc = event.location #get the location where the care was parked
     parking[loc].free += 1 #free up one space from the parking lot
 
@@ -101,7 +111,6 @@ event_handler_dictionary = {
     "leave parking"     : leave_parking
 }
 
-def event_handler(event, eventQ, parking, cables, network,arrivalrates):
-    event_handler_dictionary[event.type](event, eventQ, parking, cables, network, arrivalrates) #call the propert function according to the event type and the dictionary
+def event_handler(event, eventQ, parking, cables, network,csv):
+    event_handler_dictionary[event.type](event, eventQ, parking, cables, network, csv) #call the propert function according to the event type and the dictionary
 
-print(import_from_csv("charging_volume.csv"))

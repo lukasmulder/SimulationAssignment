@@ -1,5 +1,5 @@
 from state import State
-from event import event_handler, Event, import_arrival_rates
+from event import *
 
 """
 TODO:
@@ -13,13 +13,18 @@ def main(run_time):
     #initialition
     eventQ = [Event(0, "arrival")]
     state = State()
-    arrival_rates = import_arrival_rates()
+    csv = {"arrival": import_from_csv("arrival_hours.csv"),
+           "charging": import_from_csv("charging_volume.csv"),
+           "connection": import_from_csv("connection_time.csv")}
+    
 
     #main loop
     while eventQ != [] and eventQ[0].time < run_time: #check if the queuue is not empty and if we have not exceeded the simulation time.
-        print("\n\neventQ")
-        for event in eventQ:
-            print(event.type, event.time)
-        event_handler(eventQ.pop(0), eventQ, state.parking, state.cables, state.network, arrival_rates)
+        # print("\n\neventQ")
+        # for event in eventQ:
+        #     print(event.type, event.time)
+        print(eventQ[0].type,eventQ[0].time)
+        
+        event_handler(eventQ.pop(0), eventQ, state.parking, state.cables, state.network, csv)
 
 main(24*60)
