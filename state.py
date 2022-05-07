@@ -11,6 +11,10 @@ class Cable:
         self.capacity = capacity #its maximum capacity
         self.flow = 0 #its current flow
 
+class Time:
+    def __init__(self,hour,min):
+        self.hour = hour
+        self.min = min
 
 class State:
     def __init__(self):
