@@ -55,8 +55,7 @@ def arrival(event, eventQ, parking, cables, network, csv):
             insert_event(Event(leavetime,"leave parking",n),eventQ)
 
             break
-
-
+        
     next_arrival_time = generate_arrival_time(currenttime, csv)
     insert_event(Event(next_arrival_time, "arrival"), eventQ)
 
