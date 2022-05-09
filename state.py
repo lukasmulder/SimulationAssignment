@@ -43,3 +43,13 @@ class State:
                        , 6 : [self.cables[4], self.cables[6], self.cables[8], self.cables[9]]
                        , 7 : [self.cables[4], self.cables[5], self.cables[9]]
                    }
+
+def print_state(state):
+    print("Parking (id, free, charging)")
+    for id, loc in state.parking.items():
+        print(loc.id, loc.free, loc.charging)
+    print()
+    print("Cables (id, capacity, flow)")
+    for id, cable in state.cables.items():
+        print(cable.id, cable.capacity, cable.flow)
+    print("---------------------------------------")

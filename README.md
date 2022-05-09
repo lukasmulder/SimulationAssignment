@@ -1,6 +1,5 @@
 TODO:
-  - implement statistics
-
+  - Make simulation model
 
 Assumptions:
   - Cars have no travel time

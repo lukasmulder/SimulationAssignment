@@ -1,10 +1,10 @@
+from state import State
+from statistics import Statistics, update_statistics
 from numpy.random import choice
-from state import *
 import random
 import math
 import csv
-import pandas as pd
-from pandas import *
+from pandas import read_csv
 
 class Event:
     def __init__(self, time, type, location=None):
@@ -110,7 +110,7 @@ event_handler_dictionary = {
     "leave parking"     : leave_parking
 }
 
-def event_handler(event, eventQ, parking, cables, network,csv):
+def event_handler(event, eventQ, parking, cables, network, csv, statistics):
     event_handler_dictionary[event.type](event,
                                          eventQ,
                                          parking,
@@ -118,3 +118,4 @@ def event_handler(event, eventQ, parking, cables, network,csv):
                                          network,
                                          csv
                                         ) #call the propert function according to the event type and the dictionary
+    update_statistics(event.time, statistics, parking, cables)
