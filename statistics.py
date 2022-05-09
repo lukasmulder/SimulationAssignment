@@ -12,12 +12,13 @@ class Statistics:
                               , 9 : [(0,0)]
                               }
 
+
 def update_statistics(current_time, statistics, parking, cables):
     for loc, load_over_time in statistics.load_over_time.items():
         if (load_over_time[-1][1] != cables[loc].flow): #only append the array if the load over a cable changes
             load_over_time.append( (current_time, cables[loc].flow) )
 
-def generate_report(statistics, run_time):
+def generate_report(run_time, statistics):
     print("End of simulation, runtime was:", run_time)
 
     for loc, load_over_time in statistics.load_over_time.items():
@@ -27,17 +28,57 @@ def generate_report(statistics, run_time):
         print( "load over time of cable", loc, load_over_time )
 
     for loc, load_over_time in statistics.load_over_time.items():
-        cable_threshold = 20 if loc != 9 else 100 #set cable cable_threshold according to which cable it is
-        print( "overload of cable", loc, overload(run_time, loc, load_over_time, cable_threshold) )
+        cable_threshold = 200 if loc != 9 else 1000 #set cable cable_threshold according to which cable it is
+        print( "overload of cable", loc, overload_in_cable(run_time, loc, load_over_time, cable_threshold) )
 
-def overload(run_time, loc, load_over_time, cable_threshold):
+    print("overlad of network", overload_in_network(run_time, statistics))
+
+
+def overload_in_cable(run_time, loc, load_over_time, cable_threshold):
     overload_time = 0
 
     for i in range(len(load_over_time) - 1):
-        if load_over_time[i][1] > cable_threshold:
+        if load_over_time[i][1] > cable_threshold * 1.1: #account for the 10% overload margin
             overload_time += load_over_time[i + 1][0] - load_over_time[i][0]
 
-    if load_over_time[-1][1] > cable_threshold:
+    if load_over_time[-1][1] > cable_threshold * 1.1:
         overload_time += run_time - load_over_time[-1][0]
+
+    return overload_time/run_time
+
+
+def overload_in_network(run_time, statistics):
+    overload_intervals = []
+
+    for loc, load_over_time in statistics.load_over_time.items():
+        #get all seperate intervals with overload
+        cable_threshold = 200 if loc != 9 else 1000
+
+        for i in range(len(load_over_time) - 1):
+            if load_over_time[i][1] > cable_threshold:
+                overload_intervals.append((load_over_time[i][0], load_over_time[i + 1][0]))
+
+        if load_over_time[-1][1] > cable_threshold:
+            overload_intervals.append((load_over_time[-1][0], run_time))
+
+    # Sorting based on the increasing order
+    # of the start intervals
+    sorted_intervals = sorted(overload_intervals, key=lambda x: x[0])
+    merged = []
+
+    for higher in sorted_intervals:
+        if not merged:
+            merged.append(higher)
+        else:
+            lower = merged[-1]
+            # test for intersection between lower and higher:
+            # we know via sorting that lower[0] <= higher[0]
+            if higher[0] <= lower[1]:
+                upper_bound = max(lower[1], higher[1])
+                merged[-1] = (lower[0], upper_bound)  # replace by merged interval
+            else:
+                merged.append(higher)
+
+    overload_time = sum([y - x for [x,y] in merged])
 
     return overload_time/run_time

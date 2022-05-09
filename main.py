@@ -33,7 +33,7 @@ def main(run_time):
         #print(eventQ[0].type,eventQ[0].time)
         print_state(state)
 
-    generate_report(statistics, run_time)
+    generate_report(run_time, statistics)
 
 
 main(100)
