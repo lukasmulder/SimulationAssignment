@@ -31,9 +31,9 @@ def main(run_time):
         #     print(event.type, event.time)
         # print()
         #print(eventQ[0].type,eventQ[0].time)
-        print_state(state)
+        #print_state(state)
 
     generate_report(run_time, statistics)
 
 
-main(100)
+main(60*24)

@@ -24,8 +24,10 @@ def generate_report(run_time, statistics):
     for loc, load_over_time in statistics.load_over_time.items():
         print( "max load of cable", loc, max( [x[1] for x in load_over_time] ) )
 
-    for loc, load_over_time in statistics.load_over_time.items():
-        print( "load over time of cable", loc, load_over_time )
+    print("---------------------------------------------")
+
+    #for loc, load_over_time in statistics.load_over_time.items():
+    #    print( "load over time of cable", loc, load_over_time )
 
     for loc, load_over_time in statistics.load_over_time.items():
         cable_threshold = 200 if loc != 9 else 1000 #set cable cable_threshold according to which cable it is
