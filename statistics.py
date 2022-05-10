@@ -12,8 +12,14 @@ class Statistics:
                               , 9 : [(0,0)]
                               }
 
+        self.non_served_vehicles = 0
+        self.total_vehicles      = 0
 
-def update_statistics(current_time, statistics, parking, cables):
+        self.total_delay_time   = 0
+        self.maximum_dalay_time = 0
+        self.cars_with_delay    = 0
+
+def update_load_statistics(current_time, statistics, cables):
     for loc, load_over_time in statistics.load_over_time.items():
         if (load_over_time[-1][1] != cables[loc].flow): #only append the array if the load over a cable changes
             load_over_time.append( (current_time, cables[loc].flow) )
@@ -34,6 +40,9 @@ def generate_report(run_time, statistics):
         print( "overload of cable", loc, overload_in_cable(run_time, loc, load_over_time, cable_threshold) )
 
     print("overlad of network", overload_in_network(run_time, statistics))
+
+    print("fraction of non-served vehicles:", statistics.non_served_vehicles/statistics.total_vehicles)
+    print("average number of non-served vehicles per day:", statistics.non_served_vehicles * 1440/run_time)
 
 
 def overload_in_cable(run_time, loc, load_over_time, cable_threshold):

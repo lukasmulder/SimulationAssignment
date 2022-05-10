@@ -36,4 +36,4 @@ def main(run_time):
     generate_report(run_time, statistics)
 
 
-main(60*24)
+main(60*25)
