@@ -1,6 +1,6 @@
 from state import State, print_state
 from event import Event, event_handler, import_from_csv
-from statistics import Statistics, generate_report
+from statistics import *
 
 
 def init():
