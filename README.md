@@ -1,12 +1,10 @@
 TODO:
-  - Make each car an individual entity
-  - Implement event diagram
   - Implement solar energy
     - Implement flow network model
-    - Implement different charging strategies
-      - Price driven
-      - First come first serve
-      - Earliest latest feasible start time
+  - Implement different charging strategies
+    - Price driven
+    - First come first serve
+    - Earliest latest feasible start time
   - Poisson arrival times result in huge gap?
   - Input analysis
   - Implement more statistics
@@ -34,6 +32,7 @@ Model:
     - Parking
     - Start charging
     - Stop charging
+    - (Expected finish)
     - Finished charging
     - Departure
     - Solar change

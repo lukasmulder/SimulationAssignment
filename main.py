@@ -1,6 +1,7 @@
+import time
 from state import State, print_state
-from event import Event, event_handler, import_from_csv
-from statistics import *
+from event import Event, print_event, print_eventQ, event_handler, import_from_csv
+from statistics import Statistics, update_load_statistics, update_parking_statistics, generate_report
 
 
 def init():
@@ -12,12 +13,13 @@ def init():
     statistics = Statistics()
     return(eventQ, state, csv, statistics)
 
-def main(run_time, strategy):
+def main(run_time, strategy = None, verbose = False):
     #initialition
     eventQ, state, csv, statistics = init()
 
     #main loop
     while eventQ != [] and eventQ[0].time < run_time: #check if the queuue is not empty and if we have not exceeded the simulation time.
+        #handle event
         event_handler(eventQ.pop(0),
                       eventQ,
                       state.parking,
@@ -26,14 +28,24 @@ def main(run_time, strategy):
                       csv,
                       statistics
                      )
-        # print("\n\neventQ")
-        # for event in eventQ:
-        #     print(event.type, event.time)
-        # print()
-        #print(eventQ[0].type,eventQ[0].time)
-        #print_state(state)
 
-    generate_report(run_time, statistics)
+        #update statistics
+        update_load_statistics(eventQ[0].time, statistics, state.cables)
+        update_parking_statistics(statistics, state.parking)
 
+        #print extra information if needed
+        if verbose:
+            print_eventQ(eventQ)
+            print()
+            print("Current event")
+            print_event(eventQ[0])
+            print_state(state)
 
-main(60*24*4)
+    #generate final report
+    generate_report(run_time, state, statistics)
+
+t0 = time.time()
+main(60*24*31)
+t1 = time.time()
+
+print("total time: {} seconds".format(t1-t0))

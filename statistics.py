@@ -12,6 +12,15 @@ class Statistics:
                               , 9 : [(0,0)]
                               }
 
+        self.parked_vehicles_maximum =    { 1 : 0
+                                          , 2 : 0
+                                          , 3 : 0
+                                          , 4 : 0
+                                          , 5 : 0
+                                          , 6 : 0
+                                          , 7 : 0
+                                          }
+
         self.non_served_vehicles = 0
         self.total_vehicles      = 0
 
@@ -19,13 +28,25 @@ class Statistics:
         self.maximum_dalay_time = 0
         self.cars_with_delay    = 0
 
+def update_parking_statistics(statistics, parking):
+    for key, loc in parking.items():
+        if statistics.parked_vehicles_maximum[key] < len(loc.cars):
+            statistics.parked_vehicles_maximum[key] = len(loc.cars)
+
 def update_load_statistics(current_time, statistics, cables):
     for loc, load_over_time in statistics.load_over_time.items():
         if (load_over_time[-1][1] != cables[loc].flow): #only append the array if the load over a cable changes
             load_over_time.append( (current_time, cables[loc].flow) )
 
-def generate_report(run_time, statistics):
+def generate_report(run_time, state, statistics):
     print("End of simulation, runtime was:", run_time)
+
+    print("---------------------------------------------")
+
+    for loc, parked_vehicles_maximum in statistics.parked_vehicles_maximum.items():
+        print("parked vehicles maximum on parking {}: {}/{}".format(loc, parked_vehicles_maximum, state.parking[loc].capacity))
+
+    print("---------------------------------------------")
 
     for loc, load_over_time in statistics.load_over_time.items():
         print( "max load of cable", loc, max( [x[1] for x in load_over_time] ) )
@@ -41,8 +62,12 @@ def generate_report(run_time, statistics):
 
     print("overlad of network", overload_in_network(run_time, statistics))
 
+    print("---------------------------------------------")
+
+    print("total number of vehicles:", statistics.total_vehicles)
     print("fraction of non-served vehicles:", statistics.non_served_vehicles/statistics.total_vehicles)
     print("average number of non-served vehicles per day:", statistics.non_served_vehicles * 1440/run_time)
+    print()
 
 
 def overload_in_cable(run_time, loc, load_over_time, cable_threshold):

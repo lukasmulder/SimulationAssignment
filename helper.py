@@ -20,14 +20,10 @@ def generate_arrival_time(currenttime, csv):
 
 def generate_time(csv):
     #generates charging time and leaving time
-    charging_size = choice(range(102), size = 1, replace = False, p=normalize(csv["charging"]))[0] #in kWh
-    standing_time = choice(range(71),  size = 1, replace = False, p=normalize(csv["connection"]))[0] #in hours
+    charging_volume = choice(range(102), size = 1, replace = False, p=normalize(csv["charging"]))[0] #in kWh
+    connection_time = choice(range(71),  size = 1, replace = False, p=normalize(csv["connection"]))[0] #in hours
 
-    charging_time = charging_size / 6
-    if charging_time > 0.7 * standing_time: #check the 70% rule
-        standing_time = charging_time / 0.7
-
-    return (charging_time*60,standing_time*60)
+    return (charging_volume,connection_time*60)
 
 def normalize(list): #normalize a list
     summ = sum(list)
