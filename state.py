@@ -1,9 +1,17 @@
+class Car:
+    def __init__(self, time, volume, connection_time, loc, status):
+        self.arrival_time = time
+        self.volume = volume #charging volume
+        self.connection_time = connection_time
+        self.loc = loc
+        self.status = status #Either "parked", "charging", "finished"
+
 class Parking:
-    def __init__(self, id, free, choice):
+    def __init__(self, id, capacity, choice):
         self.id = id #the number of the parking lot
-        self.free = free #amount of available spaces
-        self.charging = 0 #amount of vehicles charging
+        self.capacity = capacity
         self.choice = choice #first choice parking percentage
+        self.cars = [] #array of parked cars
 
 class Cable:
     def __init__(self, id, capacity):
@@ -47,7 +55,11 @@ class State:
 def print_state(state):
     print("Parking (id, free, charging)")
     for id, loc in state.parking.items():
-        print(loc.id, loc.free, loc.charging)
+
+        free = loc.capacity - len(loc.cars)
+        charging = len(list(filter( lambda x: x.status == "charging", loc.cars)))
+
+        print(loc.id, free, charging)
     print()
     print("Cables (id, capacity, flow)")
     for id, cable in state.cables.items():
