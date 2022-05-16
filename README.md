@@ -1,17 +1,21 @@
 TODO:
-  - Event diagram
-    - Solar changes and price changes result in events too
-  - Poisson arrival times result in huge gap?
-  - Input analysis
   - Make each car an individual entity
-  - Implement more statistics
-    - Departure delays
-  - Implement different charging strategies
-    - Price driven
-    - First come first serve
-    - Earliest latest feasible start time
+  - Implement event diagram
   - Implement solar energy
     - Implement flow network model
+    - Implement different charging strategies
+      - Price driven
+      - First come first serve
+      - Earliest latest feasible start time
+  - Poisson arrival times result in huge gap?
+  - Input analysis
+  - Implement more statistics
+    - Departure delays
+
+Questions:
+  - Price changes as events?
+  - Does ELFS also try to actively minimize overloads
+  - Expected departure time vs. real departure time
 
 Assumptions:
   - Cars have no travel time between parking spaces
@@ -19,10 +23,21 @@ Assumptions:
   - Parking choices are random (not influenced by relative distance)
   - Cars only leave when they are fully charged
   - If connection time is shorter than charging time, it is extended as much as necessary
+  - Cars do not care about the queue when picking a parking space for the FCFS strategy
+  - Cars know the times of energy price changes
+  - Cars do not queue for an empty parking spot
 
 Model:
   - State: Parking lots, charging network, cars
-  - Events: arrival, finished charging, departure
+  - Events:
+    - Arrival
+    - Parking
+    - Start charging
+    - Stop charging
+    - Finished charging
+    - Departure
+    - Solar change
+    - Price change
   - Event diagram:         arrival
                           /       \
                          V         V

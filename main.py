@@ -12,7 +12,7 @@ def init():
     statistics = Statistics()
     return(eventQ, state, csv, statistics)
 
-def main(run_time):
+def main(run_time, strategy):
     #initialition
     eventQ, state, csv, statistics = init()
 
@@ -36,4 +36,4 @@ def main(run_time):
     generate_report(run_time, statistics)
 
 
-main(60*25)
+main(60*24*4)
