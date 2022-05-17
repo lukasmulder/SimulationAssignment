@@ -32,7 +32,7 @@ def insert_event(event, eventQ):
             low = mid+1
     eventQ.insert(low, event)
 
-def arrival(event, eventQ, parking, cables, network, csv, statistics):
+def arrival(event, eventQ, parking, cables, network, csv, statistics,strategy):
     current_time = event.time
     parkingchoices = chooseparking()
     for loc in parkingchoices:
@@ -50,7 +50,7 @@ def arrival(event, eventQ, parking, cables, network, csv, statistics):
     next_arrival_time = generate_arrival_time(current_time, csv)
     insert_event(Event(next_arrival_time, "arrival"), eventQ)
 
-def parking(event, eventQ, parking, cables, network, csv, statistics):
+def parking(event, eventQ, parking, cables, network, csv, statistics, strategy):
     #get all relevant variables
     current_time = event.time
     loc = event.loc
@@ -63,10 +63,27 @@ def parking(event, eventQ, parking, cables, network, csv, statistics):
     parking[loc].cars.append(car)
 
     #insert new event
-    event = Event(current_time, "start charging", loc = loc, car = car)
-    insert_event(event, eventQ)
+    if strategy ==1: #base strategy
+        
+        event = Event(current_time, "start charging", loc = loc, car = car)
+        insert_event(event, eventQ)
+    elif strategy == 2: #price reduction strategy
+        
+        event = Event(price_reduc_time(current_time,charging_volume,connection_time), "start charging", loc = loc, car = car)
+        insert_event(event, eventQ)
+    elif strategy == 3: 
+        
+        queue = parking[loc].queue
+        if len(queue) ==0: #check if queue is empty
+            event = Event(current_time, "start charging", loc = loc, car = car)
+            insert_event(event, eventQ)
+        else: #put car in queue
+            queue.append(car)
+            
+            
+           
 
-def start_charging(event, eventQ, parking, cables, network, csv, statistics):
+def start_charging(event, eventQ, parking, cables, network, csv, statistics, strategy):
     #get all relevant variables
     current_time = event.time
     car = event.car
@@ -83,7 +100,7 @@ def start_charging(event, eventQ, parking, cables, network, csv, statistics):
     #insert new event
     insert_event(Event(stop_time, "stop charging", loc = loc, car = car), eventQ)
 
-def stop_charging(event, eventQ, parking, cables, network, csv, statistics):
+def stop_charging(event, eventQ, parking, cables, network, csv, statistics, strategy):
     #get all relevant variables
     current_time = event.time
     car = event.car
@@ -98,7 +115,7 @@ def stop_charging(event, eventQ, parking, cables, network, csv, statistics):
     event = Event(current_time, "finished charging", loc = loc, car = car)
     insert_event(event, eventQ)
 
-def finished_charging(event, eventQ, parking, cables, network, csv, statistics):
+def finished_charging(event, eventQ, parking, cables, network, csv, statistics, strategy):
     #get all relevant variables
     current_time = event.time
     loc = event.loc
@@ -111,15 +128,15 @@ def finished_charging(event, eventQ, parking, cables, network, csv, statistics):
     event = Event(current_time, "departure", loc = loc, car = car)
     insert_event(event, eventQ)
 
-def departure(event, eventQ, parking, cables, network, csv, statistics):
+def departure(event, eventQ, parking, cables, network, csv, statistics, strategy):
     loc = event.loc #get the loc where the car is parked
     car = event.car
     parking[loc].cars.remove(car)
 
-def price_change(event, eventQ, parking, cables, network, csv, statistics):
+def price_change(event, eventQ, parking, cables, network, csv, statistics, strategy):
     pass
 
-def solar_change(event, eventQ, parking, cables, network, csv, statistics):
+def solar_change(event, eventQ, parking, cables, network, csv, statistics, strategy):
     pass
 
 #dictionary for which function to call when handling which event
@@ -134,12 +151,13 @@ event_handler_dictionary = {
     "solar change"      : solar_change
 }
 
-def event_handler(event, eventQ, parking, cables, network, csv, statistics):
+def event_handler(event, eventQ, parking, cables, network, csv, statistics,strategy):
     event_handler_dictionary[event.type](event,
                                          eventQ,
                                          parking,
                                          cables,
                                          network,
                                          csv,
-                                         statistics
+                                         statistics,
+                                         strategy
                                         ) #call the propert function according to the event type and the dictionary

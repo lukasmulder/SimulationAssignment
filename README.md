@@ -4,7 +4,9 @@ TODO:
   - Implement different charging strategies
     - Price driven
     - First come first serve
+      - queue
     - Earliest latest feasible start time
+      - priority queue
   - Poisson arrival times result in huge gap?
   - Input analysis
   - Implement more statistics

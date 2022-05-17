@@ -26,7 +26,8 @@ def main(run_time, strategy = None, verbose = False):
                       state.cables,
                       state.network,
                       csv,
-                      statistics
+                      statistics,
+                      strategy
                      )
 
         #update statistics
@@ -45,7 +46,8 @@ def main(run_time, strategy = None, verbose = False):
     generate_report(run_time, state, statistics)
 
 t0 = time.time()
-main(60*24*31)
+strategy = 2 #can be 1-4
+main(60*24*31, strategy)
 t1 = time.time()
 
 print("total time: {} seconds".format(t1-t0))

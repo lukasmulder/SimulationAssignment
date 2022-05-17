@@ -7,11 +7,12 @@ class Car:
         self.status = status #Either "parked", "charging", "finished"
 
 class Parking:
-    def __init__(self, id, capacity, choice):
+    def __init__(self, id, capacity, choice, queue = []):
         self.id = id #the number of the parking lot
         self.capacity = capacity
         self.choice = choice #first choice parking percentage
         self.cars = [] #array of parked cars
+        self.queue = queue
 
 class Cable:
     def __init__(self, id, capacity):
