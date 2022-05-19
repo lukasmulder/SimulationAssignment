@@ -44,25 +44,25 @@ def convert_time_price(time): #returns the price for a given time
         return 22
     else:
         return 20
-    
+
 def price_reduc_time(current_time, charging_volume, connection_time): #calculates starting time to minimize cost
     #strategie is: als prijs naar boven gaat: nu beginnen, als prijs op tijd naar beneden gaat: wachtem
     charging_time = (charging_volume / 6) * 60
     latest_start_time = current_time +connection_time - charging_time
     current_price = convert_time_price(current_time)
-    
+
     #als prijs omhoog gaat in toekomst
-    if current_price== 16 or current_price== 18 :
-        
-        start_time = current_time #start now   
+    if current_price == 16 or current_price == 18 :
+
+        start_time = current_time #start now
     elif current_price == 20 or current_price == 22: #als prijs omlaag gaat
-        
+
         #check if we can reach cheapest price at 00:00
         if latest_start_time -current_time >= 24*60 - (current_time%(24*60)):
             start_time = current_time + 24*60 - (current_time%(24*60))
         else: #anders zo laat mogelijk beginnen
             start_time = latest_start_time
-            
+
     return start_time
 
 def max_num_charging(loc):
