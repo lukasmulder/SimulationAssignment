@@ -74,10 +74,10 @@ def overload_in_cable(run_time, loc, load_over_time, cable_threshold):
     overload_time = 0
 
     for i in range(len(load_over_time) - 1):
-        if load_over_time[i][1] > cable_threshold * 1.1: #account for the 10% overload margin
+        if abs(load_over_time[i][1]) > cable_threshold * 1.1: #account for the 10% overload margin, absolute value in case solar generates too much power
             overload_time += load_over_time[i + 1][0] - load_over_time[i][0]
 
-    if load_over_time[-1][1] > cable_threshold * 1.1:
+    if abs(load_over_time[-1][1]) > cable_threshold * 1.1:
         overload_time += run_time - load_over_time[-1][0]
 
     return overload_time/run_time

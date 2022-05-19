@@ -25,7 +25,6 @@ def main(run_time, strategy = None, verbose = False):
                       eventQ,
                       state.parking,
                       state.cables,
-                      state.network,
                       csv,
                       statistics,
                       strategy
@@ -47,8 +46,8 @@ def main(run_time, strategy = None, verbose = False):
     generate_report(run_time, state, statistics)
 
 t0 = time.time()
-strategy = 3 #can be 1-4
-main(60*24*2, strategy, verbose = False)
+strategy = 1 #can be 1-4
+main(60*24, strategy, verbose = False)
 t1 = time.time()
 
 print("total time: {} seconds".format(t1-t0))

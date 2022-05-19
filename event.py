@@ -1,4 +1,4 @@
-from state      import State, Car
+from state      import State, Car, update_flow
 from statistics import Statistics, update_load_statistics
 from helper     import *
 from queue import PriorityQueue
@@ -33,7 +33,7 @@ def insert_event(event, eventQ):
             low = mid+1
     eventQ.insert(low, event)
 
-def arrival(event, eventQ, parking, cables, network, csv, statistics,strategy):
+def arrival(event, eventQ, parking, cables, csv, statistics, strategy):
     current_time = event.time
     parkingchoices = chooseparking()
     for loc in parkingchoices:
@@ -51,7 +51,7 @@ def arrival(event, eventQ, parking, cables, network, csv, statistics,strategy):
     next_arrival_time = generate_arrival_time(current_time, csv)
     insert_event(Event(next_arrival_time, "arrival"), eventQ)
 
-def parking(event, eventQ, parking, cables, network, csv, statistics, strategy):
+def parking(event, eventQ, parking, cables, csv, statistics, strategy):
     #get all relevant variables
     current_time = event.time
     loc = event.loc
@@ -65,15 +65,15 @@ def parking(event, eventQ, parking, cables, network, csv, statistics, strategy):
 
     #insert new event
     if strategy ==1: #base strategy
-        
+
         event = Event(current_time, "start charging", loc = loc, car = car)
         insert_event(event, eventQ)
     elif strategy == 2: #price reduction strategy
-        
+
         event = Event(price_reduc_time(current_time,charging_volume,connection_time), "start charging", loc = loc, car = car)
         insert_event(event, eventQ)
-    else: 
-        
+    else:
+
         queue = parking[loc].queue
         if parking[loc].charging < max_num_charging(loc): #check if the max number of cars is charging
             event = Event(current_time, "start charging", loc = loc, car = car)
@@ -85,9 +85,9 @@ def parking(event, eventQ, parking, cables, network, csv, statistics, strategy):
                 charging_time = (charging_volume / 6) * 60
                 latest_start_time = current_time +connection_time - charging_time
                 queue.put((latest_start_time,car))
-                        
 
-def start_charging(event, eventQ, parking, cables, network, csv, statistics, strategy):
+
+def start_charging(event, eventQ, parking, cables, csv, statistics, strategy):
     #get all relevant variables
     current_time = event.time
     car = event.car
@@ -98,14 +98,13 @@ def start_charging(event, eventQ, parking, cables, network, csv, statistics, str
 
     #update the model
     car.status = "charging"
-    parking[loc].charging +=1 
-    for cable in network[loc]:
-        cable.flow += 6
+    parking[loc].charging +=1
+    update_flow(cables, parking[loc], 6)
 
     #insert new event
     insert_event(Event(stop_time, "stop charging", loc = loc, car = car), eventQ)
 
-def stop_charging(event, eventQ, parking, cables, network, csv, statistics, strategy):
+def stop_charging(event, eventQ, parking, cables, csv, statistics, strategy):
     #get all relevant variables
     current_time = event.time
     car = event.car
@@ -113,23 +112,22 @@ def stop_charging(event, eventQ, parking, cables, network, csv, statistics, stra
 
     #update the state
     car.status = "parked" #for the base case we know it is now full, need to keep track of a battery meter in the future
-    parking[loc].charging -=1 
-    for cable in network[loc]:
-        cable.flow -= 6
+    parking[loc].charging -=1
+    update_flow(cables, parking[loc], -6)
 
     #insert new event
     event = Event(current_time, "finished charging", loc = loc, car = car)
     insert_event(event, eventQ)
-    
+
     #schedule start charging for next car in queue
-    if strategy == 3 or strategy ==4:
+    if strategy == 3 or strategy == 4:
         queue = parking[loc].queue
         nextcar = queue.get()[1]
         event = event = Event(current_time, "start charging", loc = loc, car = nextcar)
         insert_event(event, eventQ)
-        
 
-def finished_charging(event, eventQ, parking, cables, network, csv, statistics, strategy):
+
+def finished_charging(event, eventQ, parking, cables, csv, statistics, strategy):
     #get all relevant variables
     current_time = event.time
     loc = event.loc
@@ -142,15 +140,15 @@ def finished_charging(event, eventQ, parking, cables, network, csv, statistics, 
     event = Event(current_time, "departure", loc = loc, car = car)
     insert_event(event, eventQ)
 
-def departure(event, eventQ, parking, cables, network, csv, statistics, strategy):
+def departure(event, eventQ, parking, cables, csv, statistics, strategy):
     loc = event.loc #get the loc where the car is parked
     car = event.car
     parking[loc].cars.remove(car)
 
-def price_change(event, eventQ, parking, cables, network, csv, statistics, strategy):
+def price_change(event, eventQ, parking, cables, csv, statistics, strategy):
     pass
 
-def solar_change(event, eventQ, parking, cables, network, csv, statistics, strategy):
+def solar_change(event, eventQ, parking, cables, csv, statistics, strategy):
     pass
 
 #dictionary for which function to call when handling which event
@@ -165,12 +163,11 @@ event_handler_dictionary = {
     "solar change"      : solar_change
 }
 
-def event_handler(event, eventQ, parking, cables, network, csv, statistics,strategy):
+def event_handler(event, eventQ, parking, cables, csv, statistics,strategy):
     event_handler_dictionary[event.type](event,
                                          eventQ,
                                          parking,
                                          cables,
-                                         network,
                                          csv,
                                          statistics,
                                          strategy

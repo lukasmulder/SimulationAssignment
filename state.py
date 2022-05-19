@@ -10,52 +10,63 @@ class Car:
         self.status = status #Either "parked", "charging", "finished"
 
 class Parking:
-    def __init__(self, id, capacity, choice, queue = PriorityQueue(), charging =0):
+    def __init__(self, id, capacity, parent_cable, choice, queue = PriorityQueue(), charging = 0):
         self.id = id #the number of the parking lot
         self.capacity = capacity
+        self.parent_cable_id = parent_cable # parent cable it is connected to
         self.choice = choice #first choice parking percentage
         self.cars = [] #array of parked cars
         self.charging = charging #number of charging cars in parking
         self.queue = queue
 
 class Cable:
-    def __init__(self, id, capacity):
+    def __init__(self, id, capacity, parent):
         self.id = id #the number of the cable
         self.capacity = capacity #its maximum capacity
         self.flow = 0 #its current flow
+        self.parent_cable_id = parent
+        self.solar = 0 # amount of solar energy genereated at the parking lot at the end of the cable.
+                       # relevant for cables 1, 2, 5, 8 (parking lots 1, 2, 7, and 6 respectively)
 
 class State:
     def __init__(self):
-        self.parking =    { 1 : Parking(1, 60, 0.15) #initializing all the parking lots with the correct values
-                          , 2 : Parking(2, 80, 0.15)
-                          , 3 : Parking(3, 60, 0.15)
-                          , 4 : Parking(4, 70, 0.20)
-                          , 5 : Parking(5, 60, 0.15)
-                          , 6 : Parking(6, 60, 0.10)
-                          , 7 : Parking(7, 50, 0.10)
+
+        self.cables =    { 0 : Cable(0, 200, 9) #initializing all the cables with their correct values
+                         , 1 : Cable(1, 200, 0)
+                         , 2 : Cable(2, 200, 0)
+                         , 3 : Cable(3, 200, 0)
+                         , 4 : Cable(4, 200, 9)
+                         , 5 : Cable(5, 200, 4)
+                         , 6 : Cable(6, 200, 4)
+                         , 7 : Cable(7, 200, 6)
+                         , 8 : Cable(8, 200, 6)
+                         , 9 : Cable(9, 1000, None) #cable to the transformer
+                         }
+        self.parking =    { 1 : Parking(1, 60, 1, 0.15) #initializing all the parking lots with the correct values
+                          , 2 : Parking(2, 80, 2, 0.15)
+                          , 3 : Parking(3, 60, 3, 0.15)
+                          , 4 : Parking(4, 70, 4, 0.20)
+                          , 5 : Parking(5, 60, 7, 0.15)
+                          , 6 : Parking(6, 60, 8, 0.10)
+                          , 7 : Parking(7, 50, 5, 0.10)
                           }
 
-        #is dit niet onnodig extra? de cables zitten al ingebouwd in het network
-        self.cables =    { 0 : Cable(0, 200) #initializing all the cables with their correct values
-                         , 1 : Cable(1, 200)
-                         , 2 : Cable(2, 200)
-                         , 3 : Cable(3, 200)
-                         , 4 : Cable(4, 200)
-                         , 5 : Cable(5, 200)
-                         , 6 : Cable(6, 200)
-                         , 7 : Cable(7, 200)
-                         , 8 : Cable(8, 200)
-                         , 9 : Cable(9, 1000) #cable to the transformer
-                         }
+# If a demand change at a parking occurs, update_flow(parking, flow_change)
+# changes the flow through the network
+# Positive flow indicates flow from the transformer to the parking (demand)
+# negative flow indicates flow from the parking to the transformer (solar supply)
+def update_flow(cables, parking, flow_change):
+    parent_cable_id = parking.parent_cable_id
+    _update_flow(cables, parent_cable_id, flow_change)
 
-        self.network = { 1 : [self.cables[0], self.cables[1], self.cables[9]]
-                       , 2 : [self.cables[0], self.cables[2], self.cables[9]]
-                       , 3 : [self.cables[0], self.cables[3], self.cables[9]]
-                       , 4 : [self.cables[4], self.cables[9]]
-                       , 5 : [self.cables[4], self.cables[6], self.cables[7], self.cables[9]]
-                       , 6 : [self.cables[4], self.cables[6], self.cables[8], self.cables[9]]
-                       , 7 : [self.cables[4], self.cables[5], self.cables[9]]
-                   }
+# helper function for updating flow
+def _update_flow(cables, cable_id, flow_change):
+    cable = cables[cable_id]
+    cable.flow += flow_change
+    if cable.parent_cable_id != None:
+        _update_flow(cables, cable.parent_cable_id, flow_change)
+
+
 
 def print_state(state):
     print("Parking (id, free, charging)")
