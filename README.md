@@ -2,7 +2,7 @@ TODO:
   - Implement solar energy
     - Implement flow network model
   - Implement different charging strategies
-    - Price driven
+    - Price driven: lukas dit even checken
     - First come first serve
       - queue
     - Earliest latest feasible start time
