@@ -64,3 +64,7 @@ def price_reduc_time(current_time, charging_volume, connection_time): #calculate
             start_time = latest_start_time
             
     return start_time
+
+def max_num_charging(loc):
+    maxlist= [11,11,11,12,9,6,6]
+    return maxlist[loc-1]

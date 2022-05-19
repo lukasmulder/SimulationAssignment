@@ -1,3 +1,6 @@
+from queue import PriorityQueue
+
+
 class Car:
     def __init__(self, time, volume, connection_time, loc, status):
         self.arrival_time = time
@@ -7,11 +10,12 @@ class Car:
         self.status = status #Either "parked", "charging", "finished"
 
 class Parking:
-    def __init__(self, id, capacity, choice, queue = []):
+    def __init__(self, id, capacity, choice, queue = PriorityQueue(), charging =0):
         self.id = id #the number of the parking lot
         self.capacity = capacity
         self.choice = choice #first choice parking percentage
         self.cars = [] #array of parked cars
+        self.charging = charging #number of charging cars in parking
         self.queue = queue
 
 class Cable:

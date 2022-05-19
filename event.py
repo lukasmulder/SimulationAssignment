@@ -1,6 +1,7 @@
 from state      import State, Car
 from statistics import Statistics, update_load_statistics
 from helper     import *
+from queue import PriorityQueue
 
 class Event:
     def __init__(self, time, type, loc = None, car = None):
@@ -71,17 +72,20 @@ def parking(event, eventQ, parking, cables, network, csv, statistics, strategy):
         
         event = Event(price_reduc_time(current_time,charging_volume,connection_time), "start charging", loc = loc, car = car)
         insert_event(event, eventQ)
-    elif strategy == 3: 
+    else: 
         
         queue = parking[loc].queue
-        if len(queue) ==0: #check if queue is empty
+        if parking[loc].charging < max_num_charging(loc): #check if the max number of cars is charging
             event = Event(current_time, "start charging", loc = loc, car = car)
             insert_event(event, eventQ)
         else: #put car in queue
-            queue.append(car)
-            
-            
-           
+            if strategy==3 :
+                queue.put((current_time,car))
+            elif strategy ==4 :
+                charging_time = (charging_volume / 6) * 60
+                latest_start_time = current_time +connection_time - charging_time
+                queue.put((latest_start_time,car))
+                        
 
 def start_charging(event, eventQ, parking, cables, network, csv, statistics, strategy):
     #get all relevant variables
@@ -94,6 +98,7 @@ def start_charging(event, eventQ, parking, cables, network, csv, statistics, str
 
     #update the model
     car.status = "charging"
+    parking[loc].charging +=1 
     for cable in network[loc]:
         cable.flow += 6
 
@@ -108,12 +113,21 @@ def stop_charging(event, eventQ, parking, cables, network, csv, statistics, stra
 
     #update the state
     car.status = "parked" #for the base case we know it is now full, need to keep track of a battery meter in the future
+    parking[loc].charging -=1 
     for cable in network[loc]:
         cable.flow -= 6
 
     #insert new event
     event = Event(current_time, "finished charging", loc = loc, car = car)
     insert_event(event, eventQ)
+    
+    #schedule start charging for next car in queue
+    if strategy == 3 or strategy ==4:
+        queue = parking[loc].queue
+        nextcar = queue.get()[1]
+        event = event = Event(current_time, "start charging", loc = loc, car = nextcar)
+        insert_event(event, eventQ)
+        
 
 def finished_charging(event, eventQ, parking, cables, network, csv, statistics, strategy):
     #get all relevant variables
