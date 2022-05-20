@@ -9,8 +9,6 @@ TODO:
       - queue
     - Earliest latest feasible start time
       - priority queue
-  - Poisson arrival times result in huge gap
-    - Hier heeft ze het in college over gehad. Het grote gat is opzich oke, maar we moeten even nadenken wat er gebeurt als er in dat grote gat een rate change is.
   - Input analysis
   - Implement more statistics
     - Departure delays
@@ -29,6 +27,7 @@ Assumptions:
   - Cars do not care about the queue when picking a parking space for the FCFS strategy
   - Cars know the times of energy price changes
   - Cars do not queue for an empty parking spot
+  - Rate change is applied instantly and starts a new proces
 
 Model:
   - State: Parking lots, charging network, cars

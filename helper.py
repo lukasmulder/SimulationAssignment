@@ -13,10 +13,18 @@ def import_from_csv(filename):
     return list(map(float, info))
 
 def generate_arrival_time(currenttime, csv):
-    rate = (750*csv["arrival"][int(currenttime/60 % 24)]) / 60 # this function should give the rate of cars per minute
+    time_hour = int(currenttime/60 % 24)
+    time_minute = currenttime % 60
+    rate = (750*csv["arrival"][time_hour]) / 60 # this function should give the rate of cars per minute
     p = random.random()
-    arrival_time= -math.log(1 - p) / rate
-    return currenttime + arrival_time
+    arrival_time = - math.log(1 - p) / rate
+    if arrival_time + time_minute > 60: # if we have a rate change (due to the next hour approaching), generate a new arrival time within the next hour
+        rate = (750*csv["arrival"][(time_hour + 1) % 24]) / 60 # this function should give the rate of cars per minute
+        p = random.random()
+        arrival_time = - math.log(1 - p) / rate
+        return currenttime - time_minute + 60 + arrival_time # schedule the arrival time in the next hour.
+    else:
+        return currenttime + arrival_time
 
 def generate_time(csv):
     #generates charging time and leaving time
@@ -35,12 +43,12 @@ def chooseparking():
     return choice([1,2,3,4,5,6,7], size = 3, replace = False, p=[0.15,0.15,0.15,0.2,0.15,0.1,0.1])
 
 def convert_time_price(time): #returns the price for a given time
-    timehours = (time/60)%24
-    if timehours <=8:
+    time_hour = (time/60)%24
+    if time_hour <=8:
         return 16
-    elif timehours <= 16:
+    elif time_hour <= 16:
         return 18
-    elif timehours <= 20:
+    elif time_hour <= 20:
         return 22
     else:
         return 20
