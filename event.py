@@ -68,22 +68,25 @@ def parking(event, eventQ, parking, cables, csv, statistics, strategy):
 
         event = Event(current_time, "start charging", loc = loc, car = car)
         insert_event(event, eventQ)
+
     elif strategy == 2: #price reduction strategy
 
         event = Event(price_reduc_time(current_time,charging_volume,connection_time), "start charging", loc = loc, car = car)
         insert_event(event, eventQ)
+
     else:
 
         queue = parking[loc].queue
-        if parking[loc].charging < max_num_charging(loc): #check if the max number of cars is charging
+
+        if parking[loc].charging <= max_num_charging(loc): #check if the max number of cars is charging
             event = Event(current_time, "start charging", loc = loc, car = car)
             insert_event(event, eventQ)
         else: #put car in queue
-            if strategy==3 :
+            if strategy == 3 :
                 queue.put((current_time,car))
-            elif strategy ==4 :
+            elif strategy == 4 :
                 charging_time = (charging_volume / 6) * 60
-                latest_start_time = current_time +connection_time - charging_time
+                latest_start_time = current_time + connection_time - charging_time
                 queue.put((latest_start_time,car))
 
 
@@ -112,7 +115,7 @@ def stop_charging(event, eventQ, parking, cables, csv, statistics, strategy):
 
     #update the state
     car.status = "parked" #for the base case we know it is now full, need to keep track of a battery meter in the future
-    parking[loc].charging -=1
+    parking[loc].charging -= 1
     update_flow(cables, parking[loc], -6)
 
     #insert new event
@@ -123,7 +126,7 @@ def stop_charging(event, eventQ, parking, cables, csv, statistics, strategy):
     if strategy == 3 or strategy == 4:
         queue = parking[loc].queue
         nextcar = queue.get()[1]
-        event = event = Event(current_time, "start charging", loc = loc, car = nextcar)
+        event = Event(current_time, "start charging", loc = loc, car = nextcar)
         insert_event(event, eventQ)
 
 

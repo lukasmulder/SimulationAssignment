@@ -1,13 +1,16 @@
 TODO:
   - Implement solar energy
-    - Implement flow network model
+  - Charging time vs connection time: wat als charging time > connection time?
   - Implement different charging strategies
-    - Price driven: lukas dit even checken
+    - Price driven
+      - max_num_charging kan beter, is nu niet afhankelijk van wat er nog meer staat op te laden
+      - price_reduc_time kan ook nog beter, kijkt nu maximaal 24 uur vooruit.
     - First come first serve
       - queue
     - Earliest latest feasible start time
       - priority queue
-  - Poisson arrival times result in huge gap?
+  - Poisson arrival times result in huge gap
+    - Hier heeft ze het in college over gehad. Het grote gat is opzich oke, maar we moeten even nadenken wat er gebeurt als er in dat grote gat een rate change is.
   - Input analysis
   - Implement more statistics
     - Departure delays

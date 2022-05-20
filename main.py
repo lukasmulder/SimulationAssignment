@@ -6,7 +6,7 @@ from queue import PriorityQueue
 
 
 def init():
-    eventQ = [Event(0, "arrival")]
+    eventQ = [Event(20*60-1, "arrival")]
     state = State()
     csv = {"arrival": import_from_csv("arrival_hours.csv"),
            "charging": import_from_csv("charging_volume.csv"),
@@ -40,14 +40,15 @@ def main(run_time, strategy = None, verbose = False):
             print()
             print("Current event")
             print_event(eventQ[0])
-            print_state(state)
+            print("---------------------")
+            #print_state(state)
 
     #generate final report
     generate_report(run_time, state, statistics)
 
 t0 = time.time()
-strategy = 1 #can be 1-4
-main(60*24, strategy, verbose = False)
+strategy = 2 #can be 1-4
+main(20*60+5, strategy, verbose = True)
 t1 = time.time()
 
 print("total time: {} seconds".format(t1-t0))
