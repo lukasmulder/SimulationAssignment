@@ -27,11 +27,17 @@ def generate_arrival_time(currenttime, csv):
         return currenttime + arrival_time
 
 def generate_time(csv):
-    #generates charging time and leaving time
+    #generates charging volume and connection time
     charging_volume = choice(range(102), size = 1, replace = False, p=normalize(csv["charging"]))[0] #in kWh
-    connection_time = choice(range(71),  size = 1, replace = False, p=normalize(csv["connection"]))[0] #in hours
+    connection_time = 60*choice(range(71),  size = 1, replace = False, p=normalize(csv["connection"]))[0] #in hours
+    
+    charging_time = 10 * charging_volume
+    #chreck 70% rule
+    if  charging_time > connection_time*0.7:
+        #increase connection time
+        connection_time = charging_time /0.7
 
-    return (charging_volume,connection_time*60)
+    return (charging_volume,connection_time)
 
 def normalize(list): #normalize a list
     summ = sum(list)
@@ -55,9 +61,15 @@ def convert_time_price(time): #returns the price for a given time
 
 def price_reduc_time(current_time, charging_volume, connection_time): #calculates starting time to minimize cost
     #strategie is: als prijs naar boven gaat: nu beginnen, als prijs op tijd naar beneden gaat: wachtem
-    charging_time = (charging_volume / 6) * 60
+    charging_time = charging_volume *10
     latest_start_time = current_time + connection_time - charging_time
     current_price = convert_time_price(current_time)
+    # print("\n\ncurrent time ", current_time)
+    # print("connectio time ", connection_time)
+    # print("current price ", current_price)
+    # print("charging time ", charging_time)
+    # print("latest start time ", latest_start_time)
+    # print(current_time, charging_volume, connection_time)
 
     #als prijs omhoog gaat in toekomst
     if current_price == 16 or current_price == 18 :
