@@ -45,7 +45,6 @@ def normalize(list): #normalize a list
 
 def chooseparking():
     #generates 3 parking spaces that will be picked radnomly
-    #parking spaces can be the same vgm willen wij dat niet
     return choice([1,2,3,4,5,6,7], size = 3, replace = False, p=[0.15,0.15,0.15,0.2,0.15,0.1,0.1])
 
 def convert_time_price(time): #returns the price for a given time

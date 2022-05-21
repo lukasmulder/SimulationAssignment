@@ -3,7 +3,6 @@ TODO:
   - Charging time vs connection time: wat als charging time > connection time?
   - Implement different charging strategies
     - Price driven
-      - price_reduc_time kan ook nog beter, kijkt nu maximaal 24 uur vooruit.
     - First come first serve
       - queue
     - Earliest latest feasible start time
