@@ -1,5 +1,5 @@
 import time
-from state import State, print_state
+from state import State, print_state, find_parents
 from event import Event, print_event, print_eventQ, event_handler, import_from_csv
 from statistics import Statistics, update_load_statistics, update_parking_statistics, generate_report
 from queue import PriorityQueue
@@ -55,4 +55,4 @@ t1 = time.time()
 
 print("total time: {} seconds".format(t1-t0))
 
-# price_reduc_time(2836.3546981380046, 34, 60)
+

@@ -21,6 +21,7 @@ Assumptions:
   - Cars know the times of energy price changes
   - Cars do not queue for an empty parking spot
   - Rate change is applied instantly and starts a new proces
+  - for ELFS: first car is prioritized, otherwise first in line that does not "get in the way" of the first in line
 
 Model:
   - State: Parking lots, charging network, cars

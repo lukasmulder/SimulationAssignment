@@ -66,6 +66,22 @@ def _update_flow(cables, cable_id, flow_change):
     cable.flow += flow_change
     if cable.parent_cable_id != None:
         _update_flow(cables, cable.parent_cable_id, flow_change)
+        
+#function that returns id of all parents cables of a parking
+def find_parents(cables, parking):
+    parents = [parking.parent_cable_id]
+    return _find_parents(cables,parents)
+
+#helper function for find_parents
+def _find_parents(cables,parents):
+    cable = cables[parents[-1]]
+    if cable.parent_cable_id != None:
+        parents.append(cable.parent_cable_id)
+        return _find_parents(cables,parents)
+    else: 
+        return parents
+
+    
 
 
 

@@ -3,7 +3,7 @@ import math
 import csv
 from numpy.random import choice
 from pandas import read_csv
-from state import update_flow
+from state import update_flow, find_parents
 
 def import_from_csv(filename):
     #extracts second column from csv file and returns a list of floats
@@ -100,3 +100,19 @@ def check_charging_possibility(cables, parking, flow_change):
             return False
     update_flow(cables, parking, -flow_change) # remember to make the change undone
     return True
+
+#function that checks if if alternative parking(later_parking) gets in the way of first parking in queue (first_parking)
+#getting in the way means: having one of the cables on the path to first_parking reach full capacity
+def check_skip_line(cables,first_parking, later_parking, flow_change):
+    update_flow(cables, later_parking, flow_change)
+    #check if any of the cables on route to first_parking is at more than capacity - 6
+    path_to_first = find_parents(cables,first_parking)
+    for i in path_to_first:
+        cable= cables[i]
+        if cable.flow > cable.capacity -6:
+            update_flow(cables, later_parking, -flow_change) # remember to make the change undone
+            return False
+    update_flow(cables, later_parking, -flow_change) # remember to make the change undoneg
+    return True
+
+
