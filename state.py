@@ -4,10 +4,10 @@ from queue import PriorityQueue
 class Car:
     def __init__(self, time, volume, connection_time, loc, status):
         self.arrival_time = time
-        self.volume = volume #charging volume
+        self.volume = volume # charging volume
         self.connection_time = connection_time
         self.loc = loc
-        self.status = status #Either "parked", "charging", "finished"
+        self.status = status # Either "parked", "charging", "finished"
 
 class Parking:
     def __init__(self, id, capacity, parent_cable, choice, queue = PriorityQueue(), charging = 0):
@@ -50,6 +50,7 @@ class State:
                           , 6 : Parking(6, 60, 8, 0.10)
                           , 7 : Parking(7, 50, 5, 0.10)
                           }
+        self.global_queue = PriorityQueue()
 
 # If a demand change at a parking occurs, update_flow(parking, flow_change)
 # changes the flow through the network

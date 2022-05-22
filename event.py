@@ -1,5 +1,5 @@
 from state      import State, Car, update_flow
-from statistics import Statistics, update_load_statistics
+from statistics import Statistics, update_load_statistics, update_delay_statistics
 from helper     import *
 from queue import PriorityQueue
 
@@ -33,7 +33,7 @@ def insert_event(event, eventQ):
             low = mid+1
     eventQ.insert(low, event)
 
-def arrival(event, eventQ, parking, cables, csv, statistics, strategy):
+def arrival(event, eventQ, parking, cables, global_queue, csv, statistics, strategy):
     current_time = event.time
     parkingchoices = chooseparking()
     for loc in parkingchoices:
@@ -51,20 +51,22 @@ def arrival(event, eventQ, parking, cables, csv, statistics, strategy):
     next_arrival_time = generate_arrival_time(current_time, csv)
     insert_event(Event(next_arrival_time, "arrival"), eventQ)
 
-def parking(event, eventQ, parking, cables, csv, statistics, strategy):
+def parking(event, eventQ, parking, cables, global_queue, csv, statistics, strategy):
     #get all relevant variables
     current_time = event.time
     loc = event.loc
 
-    #calculate relevenent new variables
-    charging_volume, connection_time = generate_time(csv)
+    #calculate relevant new variables
+    charging_volume, connection_time, delay = generate_time(csv)
     car = Car(current_time, charging_volume, connection_time, loc, "parked")
+
+    update_delay_statistics(statistics, delay)
 
     #update the model
     parking[loc].cars.append(car)
 
     #insert new event
-    if strategy ==1: #base strategy
+    if strategy == 1: #base strategy
 
         event = Event(current_time, "start charging", loc = loc, car = car)
         insert_event(event, eventQ)
@@ -78,19 +80,22 @@ def parking(event, eventQ, parking, cables, csv, statistics, strategy):
 
         queue = parking[loc].queue
 
-        if parking[loc].charging <= max_num_charging(loc): #check if the max number of cars is charging
+
+        if check_charging_possibility(cables, parking[loc], 6): #check we can charge the next car in the queue
             event = Event(current_time, "start charging", loc = loc, car = car)
             insert_event(event, eventQ)
         else: #put car in queue
             if strategy == 3 :
-                queue.put((current_time,car))
+                queue.put((current_time, car))
+                global_queue.put((current_time, car))
             elif strategy == 4 :
                 charging_time = (charging_volume / 6) * 60
                 latest_start_time = current_time + connection_time - charging_time
                 queue.put((latest_start_time,car))
+                global_queue.put((latest_start_time,car))
 
 
-def start_charging(event, eventQ, parking, cables, csv, statistics, strategy):
+def start_charging(event, eventQ, parking, cables, global_queue, csv, statistics, strategy):
     #get all relevant variables
     current_time = event.time
     car = event.car
@@ -107,7 +112,7 @@ def start_charging(event, eventQ, parking, cables, csv, statistics, strategy):
     #insert new event
     insert_event(Event(stop_time, "stop charging", loc = loc, car = car), eventQ)
 
-def stop_charging(event, eventQ, parking, cables, csv, statistics, strategy):
+def stop_charging(event, eventQ, parking, cables, global_queue, csv, statistics, strategy):
     #get all relevant variables
     current_time = event.time
     car = event.car
@@ -119,18 +124,24 @@ def stop_charging(event, eventQ, parking, cables, csv, statistics, strategy):
     update_flow(cables, parking[loc], -6)
 
     #insert new event
-    event = Event(current_time, "finished charging", loc = loc, car = car)
+    event = Event(current_time, "finished charging", loc = loc, car = car) # this still assumes a vehicle charging is never interrupted
     insert_event(event, eventQ)
 
     #schedule start charging for next car in queue
     if strategy == 3 or strategy == 4:
-        queue = parking[loc].queue
-        nextcar = queue.get()[1]
-        event = Event(current_time, "start charging", loc = loc, car = nextcar)
-        insert_event(event, eventQ)
+        #queue = parking[loc].queue
+        if not global_queue.empty():
+            next_car = global_queue.get(block = False)[1] # check which car in the global queue is next
+            next_loc = next_car.loc
+            
+            queue = parking[next_loc].queue
+            queue.get() # remove the next car from the global queue from the parking lot queue as well
+            
+            event = Event(current_time, "start charging", loc = next_loc, car = next_car)
+            insert_event(event, eventQ)
 
 
-def finished_charging(event, eventQ, parking, cables, csv, statistics, strategy):
+def finished_charging(event, eventQ, parking, cables, global_queue, csv, statistics, strategy):
     #get all relevant variables
     current_time = event.time
     loc = event.loc
@@ -143,15 +154,15 @@ def finished_charging(event, eventQ, parking, cables, csv, statistics, strategy)
     event = Event(current_time, "departure", loc = loc, car = car)
     insert_event(event, eventQ)
 
-def departure(event, eventQ, parking, cables, csv, statistics, strategy):
+def departure(event, eventQ, parking, cables, global_queue, csv, statistics, strategy):
     loc = event.loc #get the loc where the car is parked
     car = event.car
     parking[loc].cars.remove(car)
 
-def price_change(event, eventQ, parking, cables, csv, statistics, strategy):
+def price_change(event, eventQ, parking, cables, global_queue, csv, statistics, strategy):
     pass
 
-def solar_change(event, eventQ, parking, cables, csv, statistics, strategy):
+def solar_change(event, eventQ, parking, cables, global_queue, csv, statistics, strategy):
     pass
 
 #dictionary for which function to call when handling which event
@@ -166,11 +177,12 @@ event_handler_dictionary = {
     "solar change"      : solar_change
 }
 
-def event_handler(event, eventQ, parking, cables, csv, statistics,strategy):
+def event_handler(event, eventQ, parking, cables, global_queue, csv, statistics, strategy):
     event_handler_dictionary[event.type](event,
                                          eventQ,
                                          parking,
                                          cables,
+                                         global_queue,
                                          csv,
                                          statistics,
                                          strategy

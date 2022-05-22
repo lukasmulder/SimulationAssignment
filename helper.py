@@ -1,8 +1,9 @@
-from numpy.random import choice
 import random
 import math
 import csv
+from numpy.random import choice
 from pandas import read_csv
+from state import update_flow
 
 def import_from_csv(filename):
     #extracts second column from csv file and returns a list of floats
@@ -30,14 +31,15 @@ def generate_time(csv):
     #generates charging volume and connection time
     charging_volume = choice(range(102), size = 1, replace = False, p=normalize(csv["charging"]))[0] #in kWh
     connection_time = 60*choice(range(71),  size = 1, replace = False, p=normalize(csv["connection"]))[0] #in hours
-    
-    charging_time = 10 * charging_volume
-    #chreck 70% rule
-    if  charging_time > connection_time*0.7:
-        #increase connection time
-        connection_time = charging_time /0.7
 
-    return (charging_volume,connection_time)
+    charging_time = 10 * charging_volume
+    #check 70% rule
+    delay = charging_time / 0.7 - connection_time
+    if delay > 0:
+        #increase connection time
+        connection_time = charging_time / 0.7
+
+    return charging_volume, connection_time, delay
 
 def normalize(list): #normalize a list
     summ = sum(list)
@@ -87,3 +89,14 @@ def price_reduc_time(current_time, charging_volume, connection_time): #calculate
 def max_num_charging(loc):
     maxlist = [11,11,11,12,9,6,6]
     return maxlist[loc-1]
+
+# Function takes a parking spot and checks if the network becomes overloaded
+# if a flow change occurs at that parking spot.
+def check_charging_possibility(cables, parking, flow_change):
+    update_flow(cables, parking, flow_change) # simulate a flow change and test for overload in the network
+    for id, cable in cables.items():
+        if cable.flow > cable.capacity:
+            update_flow(cables, parking, -flow_change) # remember to make the change undone
+            return False
+    update_flow(cables, parking, -flow_change) # remember to make the change undone
+    return True

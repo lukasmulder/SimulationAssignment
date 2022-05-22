@@ -3,7 +3,6 @@ from state import State, print_state
 from event import Event, print_event, print_eventQ, event_handler, import_from_csv
 from statistics import Statistics, update_load_statistics, update_parking_statistics, generate_report
 from queue import PriorityQueue
-from helper import price_reduc_time
 
 
 
@@ -27,6 +26,7 @@ def main(run_time, strategy = None, verbose = False):
                       eventQ,
                       state.parking,
                       state.cables,
+                      state.global_queue,
                       csv,
                       statistics,
                       strategy
@@ -49,8 +49,8 @@ def main(run_time, strategy = None, verbose = False):
     generate_report(run_time, state, statistics)
 
 t0 = time.time()
-strategy = 2 #can be 1-4
-main(24*60*2, strategy, verbose = False)
+strategy = 3 #can be 1-4
+main(24*60, strategy, verbose = True)
 t1 = time.time()
 
 print("total time: {} seconds".format(t1-t0))

@@ -38,6 +38,12 @@ def update_load_statistics(current_time, statistics, cables):
         if (load_over_time[-1][1] != cables[loc].flow): #only append the array if the load over a cable changes
             load_over_time.append( (current_time, cables[loc].flow) )
 
+def update_delay_statistics(statistics, delay):
+    if delay > 0:
+        statistics.total_delay_time += delay
+        statistics.maximum_dalay_time = max(delay, statistics.maximum_dalay_time)
+        statistics.cars_with_delay += 1
+
 def generate_report(run_time, state, statistics):
     print("End of simulation, runtime was:", run_time)
 
@@ -45,6 +51,12 @@ def generate_report(run_time, state, statistics):
 
     for loc, parked_vehicles_maximum in statistics.parked_vehicles_maximum.items():
         print("parked vehicles maximum on parking {}: {}/{}".format(loc, parked_vehicles_maximum, state.parking[loc].capacity))
+
+    print("---------------------------------------------")
+
+    print("percentage of vehicles with a delay: {}%".format(100*statistics.cars_with_delay/statistics.total_vehicles))
+    print("average delay over all vehicles: {} minutes".format(statistics.total_delay_time/statistics.total_vehicles))
+    print("maximum delay: {} minutes".format(statistics.maximum_dalay_time))
 
     print("---------------------------------------------")
 

@@ -1,16 +1,10 @@
 TODO:
   - Implement solar energy
-  - Charging time vs connection time: wat als charging time > connection time?
   - Implement different charging strategies
     - Price driven
     - First come first serve
-      - queue
     - Earliest latest feasible start time
-      - max_num_charging kan beter, is nu niet afhankelijk van wat er nog meer staat op te laden
-      - priority queue
   - Input analysis
-  - Implement more statistics
-    - Departure delays
 
 Questions:
   - Price changes as events?
@@ -40,7 +34,3 @@ Model:
     - Departure
     - Solar change
     - Price change
-  - Event diagram:         arrival
-                          /       \
-                         V         V
-          finished charging       departure
