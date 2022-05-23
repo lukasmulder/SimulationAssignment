@@ -77,23 +77,24 @@ def parking(event, eventQ, parking, cables, global_queue, csv, statistics, strat
         insert_event(event, eventQ)
 
     else:
-
-        queue = parking[loc].queue
-
-        #put car in queues
-        if strategy == 3 :
-            queue.put((current_time, car))
-            global_queue.put((current_time, loc))
-        elif strategy == 4 :
-            charging_time = (charging_volume / 6) * 60
-            latest_start_time = current_time + connection_time - charging_time
-            queue.put((latest_start_time,car))
-            global_queue.put((latest_start_time,loc))
-            
-        #check if we can charge first car in queue
+        
         if check_charging_possibility(cables, parking[loc], 6): #check we can charge the next car in the queue
             event = Event(current_time, "start charging", loc = loc, car = car)
             insert_event(event, eventQ)
+        else:
+            queue = parking[loc].queue
+            #put car in queues
+            if strategy == 3 :
+                queue.put((current_time, car))
+                global_queue.put((current_time, loc))
+            elif strategy == 4 :
+                charging_time = (charging_volume / 6) * 60
+                latest_start_time = current_time + connection_time - charging_time
+                queue.put((latest_start_time,car))
+                global_queue.put((latest_start_time,loc))
+
+       
+        
             
 
 
