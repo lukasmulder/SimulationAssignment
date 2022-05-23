@@ -1,8 +1,8 @@
 import random
 import math
 import csv
-# from numpy.random import choice
-# from pandas import read_csv
+from numpy.random import choice
+from pandas import read_csv
 from state import update_flow, find_parents
 
 def import_from_csv(filename):
