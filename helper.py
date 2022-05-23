@@ -13,9 +13,9 @@ def import_from_csv(filename):
 
     return list(map(float, info))
 
-def generate_arrival_time(currenttime, csv):
-    time_hour = int(currenttime/60 % 24)
-    time_minute = currenttime % 60
+def generate_arrival_time(current_time, csv):
+    time_hour = int(current_time/60 % 24)
+    time_minute = current_time % 60
     rate = (750*csv["arrival"][time_hour]) / 60 # this function should give the rate of cars per minute
     p = random.random()
     arrival_time = - math.log(1 - p) / rate
@@ -23,9 +23,9 @@ def generate_arrival_time(currenttime, csv):
         rate = (750*csv["arrival"][(time_hour + 1) % 24]) / 60 # this function should give the rate of cars per minute
         p = random.random()
         arrival_time = - math.log(1 - p) / rate
-        return currenttime - time_minute + 60 + arrival_time # schedule the arrival time in the next hour.
+        return current_time - time_minute + 60 + arrival_time # schedule the arrival time in the next hour.
     else:
-        return currenttime + arrival_time
+        return current_time + arrival_time
 
 def generate_time(csv):
     #generates charging volume and connection time
@@ -34,7 +34,7 @@ def generate_time(csv):
 
     charging_time = 10 * charging_volume
     #check 70% rule
-    delay = charging_time / 0.7 - connection_time
+    delay = max(0, charging_time / 0.7 - connection_time)
     if delay > 0:
         #increase connection time
         connection_time = charging_time / 0.7
@@ -110,9 +110,9 @@ def start_times_price_reduc(current_time, latest_start_time):
         time_reached_later = start_times_price_reduc(current_time + interval_left, latest_start_time)
         time_reached_later.append(current_time+interval_left)
         return time_reached_later
-    
 
-#helper function to fix order    
+
+#helper function to fix order
 def possible_starttime(current_time, latest_start_time):
     possible_times= start_times_price_reduc(current_time, latest_start_time)
     possible_times.append(current_time)
@@ -124,7 +124,7 @@ def good_price_reduc(current_time, charging_volume, connection_time):
     charging_time = charging_volume *10
     latest_start_time = current_time + connection_time - charging_time
     possible_times= possible_starttime(current_time, latest_start_time)
-    
+
     maxprice=100000
     besttime = 0
     for start_time in possible_times:
@@ -132,9 +132,9 @@ def good_price_reduc(current_time, charging_volume, connection_time):
         if price< maxprice:
             maxprice = price
             besttime = start_time
-            
+
     return besttime
-    
+
 
 #function that calculcates the price for charging_time if we start charging at start time
 #recursieve functie die steeds het blok toevoegt
@@ -145,7 +145,7 @@ def price_if_starttime(start_time, charging_time):
     interval_time_left = convert_time_intervalleft(start_time)
     if interval_time_left < charging_time:
         return current_price*interval_time_left/60 + price_if_starttime(start_time + interval_time_left, charging_time - interval_time_left)
-    else: 
+    else:
         return current_price*charging_time/60
 
 def max_num_charging(loc):

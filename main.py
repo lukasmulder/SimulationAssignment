@@ -2,7 +2,7 @@ import time
 from state import State, print_state, find_parents
 from event import Event, print_event, print_eventQ, event_handler, import_from_csv
 from solar import Solar
-from statistics import Statistics, update_load_statistics, update_parking_statistics, generate_report, save_data
+from statistics import *
 from queue import PriorityQueue
 
 
@@ -57,25 +57,27 @@ def main(run_time, season, solar_locations, filename, strategy, verbose = False)
             print_state(state)
 
     #generate final report
-    #generate_report(run_time, state, statistics, season, solar_locations, strategy, filename)
-    save_data(run_time, state, statistics, season, solar_locations, strategy, filename)
+    generate_report(run_time, state, statistics, season, solar_locations, strategy, filename)
+    #save_data(run_time, state, statistics, season, solar_locations, strategy, filename)
+    #dump_load_over_time(statistics)
+    #plot_load_over_time(statistics)
 
 solar_locations = [[],[1,2], [1,2,6,7]]
 strategies = [1,2,3,4]
 seasons = ["summer", "winter"]
-run_time = 60*24*1
+run_time = 60*24*7
 
 t0 = time.time()
 
-for solar_location in solar_locations:
-    for strategy in strategies:
-        if solar_location != []:
-            for season in seasons:
-                #print("solar locations: {} \nseason: {} \nstrategy: {}".format(solar_location, season, strategy))
-                main(run_time, season, solar_location, "./results/{} {} {}".format(solar_location, season, strategy), strategy, verbose = False)
-        else:
-            #print("base case \nstrategy: {}".format(strategy))
-            main(run_time, "winter", solar_location, "./results/base {}".format(strategy), strategy, verbose = False) #season doesnt matter if there are no solar panels
+# for solar_location in solar_locations:
+#     for strategy in strategies:
+#         if solar_location != []:
+#             for season in seasons:
+#                 #print("solar locations: {} \nseason: {} \nstrategy: {}".format(solar_location, season, strategy))
+#                 main(run_time, season, solar_location, "./results/{} {} {}".format(solar_location, season, strategy), strategy, verbose = False)
+#         else:
+#             #print("base case \nstrategy: {}".format(strategy))
+#             main(run_time, "winter", solar_location, "./results/base {}".format(strategy), strategy, verbose = False) #season doesnt matter if there are no solar panels
 
 t1 = time.time()
 

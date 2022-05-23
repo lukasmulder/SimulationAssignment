@@ -1,11 +1,11 @@
 from queue import PriorityQueue
 
-
 class Car:
-    def __init__(self, time, volume, connection_time, loc, status):
+    def __init__(self, time, volume, connection_time, delay, loc, status):
         self.arrival_time = time
         self.volume = volume # charging volume
         self.connection_time = connection_time
+        self.initial_delay = delay
         self.loc = loc
         self.status = status # Either "parked", "charging", "finished"
 

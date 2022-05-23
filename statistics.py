@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 class Statistics:
     def __init__(self):
         self.load_over_time = { 0 : [(0,0)]
@@ -38,14 +40,18 @@ def update_load_statistics(current_time, statistics, cables):
         if (load_over_time[-1][1] != cables[loc].flow): #only append the array if the load over a cable changes
             load_over_time.append( (current_time, cables[loc].flow) )
 
-def update_delay_statistics(statistics, delay):
+def update_delay_statistics(statistics, current_time, car):
+    arrival_time = car.arrival_time
+    initial_delay = car.initial_delay
+    connection_time = car.connection_time
+    delay = current_time - arrival_time - connection_time + initial_delay
     if delay > 0:
         statistics.total_delay_time += delay
         statistics.maximum_dalay_time = max(delay, statistics.maximum_dalay_time)
         statistics.cars_with_delay += 1
 
 def generate_report(run_time, state, statistics, season, solar_locations, strategy, fname):
-    f = open(fname + " report", 'w')
+    f = open(fname + " report.txt", 'w')
     if solar_locations != []:
         f.write("solar locations: {} \nseason: {} \nstrategy: {}\n".format(solar_locations, season, strategy))
     else:
@@ -63,7 +69,7 @@ def generate_report(run_time, state, statistics, season, solar_locations, strate
     f.write("average delay over all vehicles: {} minutes\n".format(statistics.total_delay_time/statistics.total_vehicles))
     f.write("maximum delay: {} minutes\n".format(statistics.maximum_dalay_time))
 
-    f.write("---------------------------------------------")
+    f.write("---------------------------------------------\n")
 
     for loc, load_over_time in statistics.load_over_time.items():
         f.write( "max load of cable {}: {}\n".format(loc, max( [abs(x[1]) for x in load_over_time] ) ) )
@@ -84,7 +90,7 @@ def generate_report(run_time, state, statistics, season, solar_locations, strate
     f.close()
 
 def save_data(run_time, state, statistics, season, solar_locations, strategy, fname):
-    f = open(fname + " data", 'w')
+    f = open(fname + " data.txt", 'w')
     if solar_locations != []:
         f.write("solar locations: {}, season: {}, strategy: {}, run time: {}\n".format(solar_locations, season, strategy, run_time))
     else:
@@ -115,6 +121,20 @@ def save_data(run_time, state, statistics, season, solar_locations, strategy, fn
     f.write("fraction of non-served vehicles\n{}\n".format( statistics.non_served_vehicles/statistics.total_vehicles) )
     f.write("average number of non-served vehicles per day\n{}\n".format( statistics.non_served_vehicles * 1440/run_time) )
     f.close()
+
+def dump_load_over_time(statistics):
+    f = open("./results/load_over_time.txt", "w")
+    for loc, load_over_time in statistics.load_over_time.items():
+        f.write("location: {}\n".format(loc))
+        for x in load_over_time:
+            f.write("{}; {}\n".format(x[0],x[1]))
+        f.write("\n")
+
+def plot_load_over_time(statistics):
+    for loc, load_over_time in statistics.load_over_time.items():
+        plt.subplot(2,5,loc + 1)
+        plt.plot([x[0] for x in load_over_time], [x[1] for x in load_over_time])
+    plt.show()
 
 def overload_in_cable(run_time, loc, load_over_time, cable_threshold):
     overload_time = 0
