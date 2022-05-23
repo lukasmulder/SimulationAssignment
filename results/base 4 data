@@ -1,22 +1,22 @@
-base case, strategy: 3, run time: 1440
+base case, strategy: 4, run time: 1440
 parked vehicles maximum on parking (parking, maximum, capacity)
-1 54 60
-2 45 80
-3 54 60
+1 60 60
+2 54 80
+3 59 60
 4 70 70
 5 60 60
 6 49 60
-7 31 50
+7 50 50
 percentage of vehicles with a delay
-31.31313131313131
+30.271668822768433
 average delay over all vehicles
-74.72273757988044 
+79.90389946405469 
 maximum delay
-842.8571428571429 
+1382.857142857143 
 max load of cable (cable, load)0 198
-1 102
-2 72
-3 108
+1 132
+2 96
+3 96
 4 198
 5 60
 6 120
@@ -36,8 +36,8 @@ overload of cable (cable, overload percentage)0 0.0
 overload of network 
 0.0
 total number of vehicles
-693
+773
 fraction of non-served vehicles
-0.030303030303030304
+0.07891332470892626
 average number of non-served vehicles per day
-21.0
+61.0

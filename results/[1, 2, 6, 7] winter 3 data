@@ -1,28 +1,28 @@
-base case, strategy: 3, run time: 1440
+solar locations: [1, 2, 6, 7], season: winter, strategy: 3, run time: 1440
 parked vehicles maximum on parking (parking, maximum, capacity)
-1 54 60
-2 45 80
-3 54 60
+1 45 60
+2 48 80
+3 60 60
 4 70 70
 5 60 60
-6 49 60
-7 31 50
+6 40 60
+7 39 50
 percentage of vehicles with a delay
-31.31313131313131
+30.546075085324233
 average delay over all vehicles
-74.72273757988044 
+78.08873720136516 
 maximum delay
-842.8571428571429 
-max load of cable (cable, load)0 198
-1 102
-2 72
-3 108
-4 198
-5 60
-6 120
-7 78
-8 54
-9 396
+1200.0 
+max load of cable (cable, load)0 207.81228280090795
+1 66.0
+2 71.82767241331979
+3 102
+4 215.65534482663952
+5 66.0
+6 119.82767241331977
+7 84
+8 54.0
+9 415.6245656018159
 overload of cable (cable, overload percentage)0 0.0
 1 0.0
 2 0.0
@@ -34,10 +34,10 @@ overload of cable (cable, overload percentage)0 0.0
 8 0.0
 9 0.0
 overload of network 
-0.0
+0.020626473463943522
 total number of vehicles
-693
+586
 fraction of non-served vehicles
-0.030303030303030304
+0.020477815699658702
 average number of non-served vehicles per day
-21.0
+12.0

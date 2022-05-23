@@ -59,7 +59,7 @@ def parking(event, eventQ, parking, cables, global_queue, solar, season, csv, st
 
     #calculate relevant new variables
     charging_volume, connection_time, delay = generate_time(csv)
-    car = Car(current_time, charging_volume, connection_time, loc, "parked")
+    car = Car(current_time, charging_volume, connection_time, loc=loc, status = "parked")
 
     update_delay_statistics(statistics, delay)
 
@@ -79,7 +79,7 @@ def parking(event, eventQ, parking, cables, global_queue, solar, season, csv, st
 
     else:
 
-        if check_charging_possibility(cables, parking[loc], 6): #check we can charge the next car in the queue
+        if check_charging_possibility(cables, parking[loc], 6): #check we can charge here
             event = Event(current_time, "start charging", loc = loc, car = car)
             insert_event(event, eventQ)
         else:
@@ -87,12 +87,12 @@ def parking(event, eventQ, parking, cables, global_queue, solar, season, csv, st
             #put car in queues
             if strategy == 3 :
                 queue.put((current_time, car))
-                global_queue.put((current_time, loc))
+                global_queue.put((current_time, car))
             elif strategy == 4 :
                 charging_time = (charging_volume / 6) * 60
                 latest_start_time = current_time + connection_time - charging_time
                 queue.put((latest_start_time,car))
-                global_queue.put((latest_start_time,loc))
+                global_queue.put((latest_start_time,car))
 
 
 
@@ -135,20 +135,19 @@ def stop_charging(event, eventQ, parking, cables, global_queue, solar, season, c
     if strategy == 3 or strategy == 4:
         #queue = parking[loc].queue
         if not global_queue.empty():
-            time, next_loc = global_queue.get() # check which car in the global queue is next
+            time, next_car = global_queue.get() # check which car in the global queue is next
+            next_loc = next_car.loc
 
             if check_charging_possibility(cables, parking[next_loc], 6): #check we can charge the next car in the queue
                 #get car from local queue
-                _,next_car = parking[next_loc].queue.get()
+                parking[next_loc].queue.get()
 
                 #schedule start charging of first car from queue
                 event = Event(current_time, "start charging", loc = next_loc, car = next_car)
                 insert_event(event, eventQ)
             else:
                 #reinsert
-                global_queue.put((time,next_loc))
-
-
+                global_queue.put((time,next_car))
 
 
 def finished_charging(event, eventQ, parking, cables, global_queue, solar, season, csv, statistics, strategy):
