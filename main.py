@@ -1,23 +1,32 @@
 import time
 from state import State, print_state, find_parents
 from event import Event, print_event, print_eventQ, event_handler, import_from_csv
+from solar import Solar
 from statistics import Statistics, update_load_statistics, update_parking_statistics, generate_report
 from queue import PriorityQueue
 
 
+#init takes a list of all parking spots with a solar panel and returns all the relevant initials
+def init(solar_locations):
+    eventQ = [Event(0, "solar change", flow = 0), Event(0, "arrival")]
 
-def init():
-    eventQ = [Event(0, "arrival")]
     state = State()
+    for loc in solar_locations:
+        state.parking[loc].solar = True
+
+    solar = Solar()
+
     csv = {"arrival": import_from_csv("arrival_hours.csv"),
            "charging": import_from_csv("charging_volume.csv"),
            "connection": import_from_csv("connection_time.csv")}
-    statistics = Statistics()
-    return(eventQ, state, csv, statistics)
 
-def main(run_time, strategy = None, verbose = False):
+    statistics = Statistics()
+
+    return(eventQ, state, solar, csv, statistics)
+
+def main(run_time, season, solar_locations, strategy = None, verbose = False):
     #initialition
-    eventQ, state, csv, statistics = init()
+    eventQ, state, solar, csv, statistics = init(solar_locations)
 
     #main loop
     while eventQ != [] and eventQ[0].time < run_time: #check if the queuue is not empty and if we have not exceeded the simulation time.
@@ -27,6 +36,8 @@ def main(run_time, strategy = None, verbose = False):
                       state.parking,
                       state.cables,
                       state.global_queue,
+                      solar,
+                      season,
                       csv,
                       statistics,
                       strategy
@@ -38,21 +49,32 @@ def main(run_time, strategy = None, verbose = False):
 
         #print extra information if needed
         if verbose:
-            print_eventQ(eventQ)
-            print()
+            # print_eventQ(eventQ)
+            # print()
             print("Current event")
             print_event(eventQ[0])
             print("---------------------")
-            #print_state(state)
+            print_state(state)
 
     #generate final report
     generate_report(run_time, state, statistics)
 
+
+solar_locations = [[],[1,2], [1,2,6,7]]
+strategies = [1,2,3,4]
+seasons = ["summer", "winter"]
+
 t0 = time.time()
-strategy = 3 #can be 1-4
-main(24*60, strategy, verbose = True)
+
+for solar_location in solar_locations:
+    for strategy in strategies:
+        if solar_location != []:
+            for season in seasons:
+                print("solar locations: {} \nseason: {} \nstrategy: {}".format(solar_location, season, strategy))
+                main(60*24*3, season, solar_location, strategy, verbose = False)
+        else:
+            print("base case \nstrategy: {}".format(strategy))
+            main(60*24*3, "winter", solar_location, strategy, verbose = False) #season doesnt matter if there are no solar panels
 t1 = time.time()
 
 print("total time: {} seconds".format(t1-t0))
-
-

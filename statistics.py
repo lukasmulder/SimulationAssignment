@@ -61,7 +61,7 @@ def generate_report(run_time, state, statistics):
     print("---------------------------------------------")
 
     for loc, load_over_time in statistics.load_over_time.items():
-        print( "max load of cable", loc, max( [x[1] for x in load_over_time] ) )
+        print( "max load of cable", loc, max( [abs(x[1]) for x in load_over_time] ) )
 
     print("---------------------------------------------")
 
