@@ -1,3 +1,0 @@
-max_num_charging
-parking.queue
-latest_start_time ? => even kijken naar generate_time

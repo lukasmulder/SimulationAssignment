@@ -1,0 +1,41 @@
+base case 
+strategy: 3
+End of simulation, runtime was: 1440
+---------------------------------------------
+parked vehicles maximum on parking 1: 59/60
+parked vehicles maximum on parking 2: 66/80
+parked vehicles maximum on parking 3: 60/60
+parked vehicles maximum on parking 4: 70/70
+parked vehicles maximum on parking 5: 60/60
+parked vehicles maximum on parking 6: 42/60
+parked vehicles maximum on parking 7: 46/50
+---------------------------------------------
+percentage of vehicles with a delay: 30.335570469798657%
+average delay over all vehicles: 74.07861936721 minutes
+maximum delay: 1257.142857142857 minutes
+---------------------------------------------max load of cable 0: 198
+max load of cable 1: 102
+max load of cable 2: 102
+max load of cable 3: 102
+max load of cable 4: 198
+max load of cable 5: 54
+max load of cable 6: 138
+max load of cable 7: 96
+max load of cable 8: 84
+max load of cable 9: 396
+---------------------------------------------
+overload of cable 0: 0.0
+overload of cable 1: 0.0
+overload of cable 2: 0.0
+overload of cable 3: 0.0
+overload of cable 4: 0.0
+overload of cable 5: 0.0
+overload of cable 6: 0.0
+overload of cable 7: 0.0
+overload of cable 8: 0.0
+overload of cable 9: 0.0
+overlad of network: 0.0
+---------------------------------------------
+total number of vehicles: 745
+fraction of non-served vehicles: 0.052348993288590606
+average number of non-served vehicles per day: 39.0

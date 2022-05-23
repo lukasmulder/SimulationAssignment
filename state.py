@@ -10,9 +10,10 @@ class Car:
         self.status = status # Either "parked", "charging", "finished"
 
 class Parking:
-    def __init__(self, id, capacity, parent_cable, choice, queue = PriorityQueue(), charging = 0):
+    def __init__(self, id, capacity, parent_cable, choice, queue = PriorityQueue(), charging = 0, solar = False):
         self.id = id #the number of the parking lot
         self.capacity = capacity
+        self.solar = solar
         self.parent_cable_id = parent_cable # parent cable it is connected to
         self.choice = choice #first choice parking percentage
         self.cars = [] #array of parked cars
@@ -25,8 +26,6 @@ class Cable:
         self.capacity = capacity #its maximum capacity
         self.flow = 0 #its current flow
         self.parent_cable_id = parent
-        self.solar = 0 # amount of solar energy genereated at the parking lot at the end of the cable.
-                       # relevant for cables 1, 2, 5, 8 (parking lots 1, 2, 7, and 6 respectively)
 
 class State:
     def __init__(self):
@@ -50,6 +49,7 @@ class State:
                           , 6 : Parking(6, 60, 8, 0.10)
                           , 7 : Parking(7, 50, 5, 0.10)
                           }
+
         self.global_queue = PriorityQueue()
 
 # If a demand change at a parking occurs, update_flow(parking, flow_change)
@@ -66,7 +66,12 @@ def _update_flow(cables, cable_id, flow_change):
     cable.flow += flow_change
     if cable.parent_cable_id != None:
         _update_flow(cables, cable.parent_cable_id, flow_change)
-        
+
+def update_solar(cables, parking, new_flow, current_flow):
+    solar_parking = list(filter(lambda x : parking[x].solar, parking)) # array of keys of all solar parking
+    for loc in solar_parking:
+        update_flow(cables, parking[loc], current_flow - new_flow)
+
 #function that returns id of all parents cables of a parking
 def find_parents(cables, parking):
     parents = [parking.parent_cable_id]
@@ -78,12 +83,8 @@ def _find_parents(cables,parents):
     if cable.parent_cable_id != None:
         parents.append(cable.parent_cable_id)
         return _find_parents(cables,parents)
-    else: 
+    else:
         return parents
-
-    
-
-
 
 def print_state(state):
     print("Parking (id, free, charging)")

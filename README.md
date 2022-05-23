@@ -1,10 +1,8 @@
 TODO:
   - Implement solar energy
-  - Implement different charging strategies
-    - Price driven
-    - First come first serve
-    - Earliest latest feasible start time
+    - implement statistics?
   - Input analysis
+  - Output analysis
 
 Questions:
   - Price changes as events?
@@ -22,6 +20,7 @@ Assumptions:
   - Cars do not queue for an empty parking spot
   - Rate change is applied instantly and starts a new proces
   - for ELFS: first car is prioritized, otherwise first in line that does not "get in the way" of the first in line
+  - Global queue assumption
 
 Model:
   - State: Parking lots, charging network, cars
