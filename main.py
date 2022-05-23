@@ -24,7 +24,7 @@ def init(solar_locations):
 
     return(eventQ, state, solar, csv, statistics)
 
-def main(run_time, season, solar_locations, strategy = None, verbose = False):
+def main(run_time, season, solar_locations, filename, strategy, verbose = False):
     #initialition
     eventQ, state, solar, csv, statistics = init(solar_locations)
 
@@ -49,20 +49,21 @@ def main(run_time, season, solar_locations, strategy = None, verbose = False):
 
         #print extra information if needed
         if verbose:
-            # print_eventQ(eventQ)
-            # print()
+            print_eventQ(eventQ)
+            print()
             print("Current event")
             print_event(eventQ[0])
             print("---------------------")
             print_state(state)
 
     #generate final report
-    generate_report(run_time, state, statistics)
+    generate_report(run_time, state, statistics, season, solar_locations, strategy, filename)
 
 
 solar_locations = [[],[1,2], [1,2,6,7]]
 strategies = [1,2,3,4]
 seasons = ["summer", "winter"]
+run_time = 60*24*1
 
 t0 = time.time()
 
@@ -70,11 +71,12 @@ for solar_location in solar_locations:
     for strategy in strategies:
         if solar_location != []:
             for season in seasons:
-                print("solar locations: {} \nseason: {} \nstrategy: {}".format(solar_location, season, strategy))
-                main(60*24*3, season, solar_location, strategy, verbose = False)
+                #print("solar locations: {} \nseason: {} \nstrategy: {}".format(solar_location, season, strategy))
+                main(run_time, season, solar_location, "./results/{} {} {}".format(solar_location, season, strategy), strategy, verbose = False)
         else:
-            print("base case \nstrategy: {}".format(strategy))
-            main(60*24*3, "winter", solar_location, strategy, verbose = False) #season doesnt matter if there are no solar panels
+            #print("base case \nstrategy: {}".format(strategy))
+            main(run_time, "winter", solar_location, "./results/base {}".format(strategy), strategy, verbose = False) #season doesnt matter if there are no solar panels
+
 t1 = time.time()
 
 print("total time: {} seconds".format(t1-t0))

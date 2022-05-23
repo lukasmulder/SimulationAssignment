@@ -44,42 +44,44 @@ def update_delay_statistics(statistics, delay):
         statistics.maximum_dalay_time = max(delay, statistics.maximum_dalay_time)
         statistics.cars_with_delay += 1
 
-def generate_report(run_time, state, statistics):
-    print("End of simulation, runtime was:", run_time)
+def generate_report(run_time, state, statistics, season, solar_locations, strategy, fname):
+    f = open(fname, 'w')
+    if solar_locations != []:
+        f.write("solar locations: {} \nseason: {} \nstrategy: {}\n".format(solar_locations, season, strategy))
+    else:
+        f.write("base case \nstrategy: {}\n".format(strategy))
+    f.write("End of simulation, runtime was: {}\n".format(run_time))
 
-    print("---------------------------------------------")
+    f.write("---------------------------------------------\n")
 
     for loc, parked_vehicles_maximum in statistics.parked_vehicles_maximum.items():
-        print("parked vehicles maximum on parking {}: {}/{}".format(loc, parked_vehicles_maximum, state.parking[loc].capacity))
+        f.write("parked vehicles maximum on parking {}: {}/{}\n".format(loc, parked_vehicles_maximum, state.parking[loc].capacity))
 
-    print("---------------------------------------------")
+    f.write("---------------------------------------------\n")
 
-    print("percentage of vehicles with a delay: {}%".format(100*statistics.cars_with_delay/statistics.total_vehicles))
-    print("average delay over all vehicles: {} minutes".format(statistics.total_delay_time/statistics.total_vehicles))
-    print("maximum delay: {} minutes".format(statistics.maximum_dalay_time))
+    f.write("percentage of vehicles with a delay: {}%\n".format(100*statistics.cars_with_delay/statistics.total_vehicles))
+    f.write("average delay over all vehicles: {} minutes\n".format(statistics.total_delay_time/statistics.total_vehicles))
+    f.write("maximum delay: {} minutes\n".format(statistics.maximum_dalay_time))
 
-    print("---------------------------------------------")
+    f.write("---------------------------------------------")
 
     for loc, load_over_time in statistics.load_over_time.items():
-        print( "max load of cable", loc, max( [abs(x[1]) for x in load_over_time] ) )
+        f.write( "max load of cable {}: {}\n".format(loc, max( [abs(x[1]) for x in load_over_time] ) ) )
 
-    print("---------------------------------------------")
-
-    #for loc, load_over_time in statistics.load_over_time.items():
-    #    print( "load over time of cable", loc, load_over_time )
+    f.write("---------------------------------------------\n")
 
     for loc, load_over_time in statistics.load_over_time.items():
         cable_threshold = 200 if loc != 9 else 1000 #set cable cable_threshold according to which cable it is
-        print( "overload of cable", loc, overload_in_cable(run_time, loc, load_over_time, cable_threshold) )
+        f.write( "overload of cable {}: {}\n".format(loc, overload_in_cable(run_time, loc, load_over_time, cable_threshold) ) )
 
-    print("overlad of network", overload_in_network(run_time, statistics))
+    f.write("overlad of network: {}\n".format(overload_in_network(run_time, statistics)) )
 
-    print("---------------------------------------------")
+    f.write("---------------------------------------------\n")
 
-    print("total number of vehicles:", statistics.total_vehicles)
-    print("fraction of non-served vehicles:", statistics.non_served_vehicles/statistics.total_vehicles)
-    print("average number of non-served vehicles per day:", statistics.non_served_vehicles * 1440/run_time)
-    print()
+    f.write("total number of vehicles: {}\n".format( statistics.total_vehicles) )
+    f.write("fraction of non-served vehicles: {}\n".format( statistics.non_served_vehicles/statistics.total_vehicles) )
+    f.write("average number of non-served vehicles per day: {}\n".format( statistics.non_served_vehicles * 1440/run_time) )
+    f.close()
 
 
 def overload_in_cable(run_time, loc, load_over_time, cable_threshold):
