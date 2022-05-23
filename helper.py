@@ -1,8 +1,8 @@
 import random
 import math
 import csv
-from numpy.random import choice
-from pandas import read_csv
+# from numpy.random import choice
+# from pandas import read_csv
 from state import update_flow, find_parents
 
 def import_from_csv(filename):
@@ -51,14 +51,28 @@ def chooseparking():
 
 def convert_time_price(time): #returns the price for a given time
     time_hour = (time/60)%24
-    if time_hour <=8:
+    if time_hour <8:
         return 16
-    elif time_hour <= 16:
+    elif time_hour < 16:
         return 18
-    elif time_hour <= 20:
+    elif time_hour <20:
         return 22
     else:
         return 20
+
+#returns the size of the interval left
+def convert_time_intervalleft(time):
+    time_hour = (time/60)%24
+    time_minutes = 60* time_hour
+    if time_hour <8:
+        return 8*60 -time_minutes
+    elif time_hour <16:
+        return 16*60 -time_minutes
+    elif time_hour <20:
+        return 20*60 -time_minutes
+    else:
+        return 24*60 - time_minutes
+
 
 def price_reduc_time(current_time, charging_volume, connection_time): #calculates starting time to minimize cost
     #strategie is: als prijs naar boven gaat: nu beginnen, als prijs op tijd naar beneden gaat: wachtem
@@ -85,6 +99,54 @@ def price_reduc_time(current_time, charging_volume, connection_time): #calculate
             start_time = latest_start_time
 
     return start_time
+
+#function that returns all possible starting times that could minimize price
+def start_times_price_reduc(current_time, latest_start_time):
+    interval_left = convert_time_intervalleft(current_time)
+    #base case
+    if interval_left > latest_start_time - current_time: #if we cannot reach next interval
+        return [latest_start_time]
+    else: #if we can reach next interval
+        time_reached_later = start_times_price_reduc(current_time + interval_left, latest_start_time)
+        time_reached_later.append(current_time+interval_left)
+        return time_reached_later
+    
+
+#helper function to fix order    
+def possible_starttime(current_time, latest_start_time):
+    possible_times= start_times_price_reduc(current_time, latest_start_time)
+    possible_times.append(current_time)
+    possible_times.reverse()
+    return possible_times
+
+#geeft het echte optimum start tijd om prijs teminimalizeren
+def good_price_reduc(current_time, charging_volume, connection_time):
+    charging_time = charging_volume *10
+    latest_start_time = current_time + connection_time - charging_time
+    possible_times= possible_starttime(current_time, latest_start_time)
+    
+    maxprice=100000
+    besttime = 0
+    for start_time in possible_times:
+        price = price_if_starttime(start_time, charging_time)
+        if price< maxprice:
+            maxprice = price
+            besttime = start_time
+            
+    return besttime
+    
+
+#function that calculcates the price for charging_time if we start charging at start time
+#recursieve functie die steeds het blok toevoegt
+def price_if_starttime(start_time, charging_time):
+    if charging_time == 0:
+        return 0
+    current_price = convert_time_price(start_time)
+    interval_time_left = convert_time_intervalleft(start_time)
+    if interval_time_left < charging_time:
+        return current_price*interval_time_left/60 + price_if_starttime(start_time + interval_time_left, charging_time - interval_time_left)
+    else: 
+        return current_price*charging_time/60
 
 def max_num_charging(loc):
     maxlist = [11,11,11,12,9,6,6]
@@ -115,4 +177,4 @@ def check_skip_line(cables,first_parking, later_parking, flow_change):
     update_flow(cables, later_parking, -flow_change) # remember to make the change undoneg
     return True
 
-
+good_price_reduc(1,18*6,48*60)
