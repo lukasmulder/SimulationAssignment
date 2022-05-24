@@ -158,7 +158,8 @@ def finished_charging(event, eventQ, parking, cables, global_queue, solar, seaso
     car.status = "finished"
 
     #insert new event
-    event = Event(current_time, "departure", loc = loc, car = car)
+    departure_time = max(current_time, car.arrival_time+car.connection_time)
+    event = Event(departure_time, "departure", loc = loc, car = car)
     insert_event(event, eventQ)
 
 def departure(event, eventQ, parking, cables, global_queue, solar, season, csv, statistics, strategy):
