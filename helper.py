@@ -29,8 +29,8 @@ def generate_arrival_time(currenttime, csv):
 
 def generate_time(csv):
     #generates charging volume and connection time
-    charging_volume = choice(range(102), size = 1, replace = False, p=normalize(csv["charging"]))[0] #in kWh
-    connection_time = 60*choice(range(71),  size = 1, replace = False, p=normalize(csv["connection"]))[0] #in hours
+    charging_volume = choice(range(102), size = 1, replace = False, p=normalize(csv["charging"]))[0] + random.random() #in kWh
+    connection_time = 60*choice(range(71),  size = 1, replace = False, p=normalize(csv["connection"]))[0] + 60*random.random()#in hours
 
     charging_time = 10 * charging_volume
     #check 70% rule
