@@ -67,21 +67,21 @@ def main(run_time, season, solar_locations, filename, strategy, verbose = False)
 solar_locations = [[],[1,2], [1,2,6,7]]
 strategies = [1,2,3,4]
 seasons = ["summer", "winter"]
-run_time = 60*24*3
+run_time = 60*24*7
 
 t0 = time.time()
 
-# for solar_location in solar_locations:
-#     for strategy in strategies:
-#         if solar_location != []:
-#             for season in seasons:
-#                 #print("solar locations: {} \nseason: {} \nstrategy: {}".format(solar_location, season, strategy))
-#                 main(run_time, season, solar_location, "./results/{} {} {}".format(solar_location, season, strategy), strategy, verbose = False)
-#         else:
-#             #print("base case \nstrategy: {}".format(strategy))
-#             main(run_time, "winter", solar_location, "./results/base {}".format(strategy), strategy, verbose = False) #season doesnt matter if there are no solar panels
+for solar_location in solar_locations:
+    for strategy in strategies:
+        if solar_location != []:
+            for season in seasons:
+                #print("solar locations: {} \nseason: {} \nstrategy: {}".format(solar_location, season, strategy))
+                main(run_time, season, solar_location, "./results/{} {} {}".format(solar_location, season, strategy), strategy, verbose = False)
+        else:
+            #print("base case \nstrategy: {}".format(strategy))
+            main(run_time, "winter", solar_location, "./results/base {}".format(strategy), strategy, verbose = False) #season doesnt matter if there are no solar panels
 
-main(run_time, "winter", solar_locations[1], "./results/test.txt", strategies[0], verbose = False)
+# main(run_time, "winter", solar_locations[1], "./results/test.txt", strategies[0], verbose = False)
 
 t1 = time.time()
 
