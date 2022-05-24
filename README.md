@@ -5,6 +5,17 @@ TODO:
     - Delay statistics
   - Output analysis
 
+Cat:
+  - model schrijven
+  - confidence lezen en implementeren
+
+Lukas: 
+  - statistiekjes van alle measures
+  - graphs
+  - tabellen
+    - Solar placement vs. season & strat -> cost, delay
+  - run 1 maand
+
 Questions:
   - Price changes as events?
   - Does ELFS also try to actively minimize overloads
