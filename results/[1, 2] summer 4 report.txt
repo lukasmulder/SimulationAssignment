@@ -11,22 +11,22 @@ parked vehicles maximum on parking 5: 60/60
 parked vehicles maximum on parking 6: 60/60
 parked vehicles maximum on parking 7: 50/50
 ---------------------------------------------
-percentage of vehicles with a delay: 49.18032786885246%
-average delay over all vehicles: 206.8938148302236 minutes
-maximum delay: 740.6202240289134 minutes
+percentage of vehicles with a delay: 49.47735191637631%
+average delay over all vehicles: 216.0126157048424 minutes
+maximum delay: 863.1587393842327 minutes
 ---------------------------------------------
-max load of cable 0: 250.95842722407912
-max load of cable 1: 115.7079146071597
-max load of cable 2: 120.09537817481241
-max load of cable 3: 162
+max load of cable 0: 262.67058226554843
+max load of cable 1: 108.0
+max load of cable 2: 112.91587274585359
+max load of cable 3: 150
 max load of cable 4: 198
-max load of cable 5: 78
+max load of cable 5: 84
 max load of cable 6: 132
 max load of cable 7: 90
-max load of cable 8: 108
-max load of cable 9: 448.9584272240791
+max load of cable 8: 72
+max load of cable 9: 454.6705822655482
 ---------------------------------------------
-overload of cable 0: 0.019464592111765544
+overload of cable 0: 0.012091699757163208
 overload of cable 1: 0.0
 overload of cable 2: 0.0
 overload of cable 3: 0.0
@@ -36,8 +36,8 @@ overload of cable 6: 0.0
 overload of cable 7: 0.0
 overload of cable 8: 0.0
 overload of cable 9: 0.0
-overload of network: 0.05906536556919278
+overload of network: 0.040867935207646665
 ---------------------------------------------
-total number of vehicles: 4880
-fraction of non-served vehicles: 1.0293032786885246
-average number of non-served vehicles per day: 717.5714285714286
+total number of vehicles: 4018
+fraction of non-served vehicles: 0.8994524639123942
+average number of non-served vehicles per day: 516.2857142857143

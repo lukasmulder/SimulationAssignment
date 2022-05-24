@@ -11,33 +11,33 @@ parked vehicles maximum on parking 5: 60/60
 parked vehicles maximum on parking 6: 60/60
 parked vehicles maximum on parking 7: 50/50
 ---------------------------------------------
-percentage of vehicles with a delay: 52.930622009569376%
-average delay over all vehicles: 58.91281796625441 minutes
-maximum delay: 374.86751465117277 minutes
+percentage of vehicles with a delay: 53.60866078588613%
+average delay over all vehicles: 141.5223428644163 minutes
+maximum delay: 545.3591379357432 minutes
 ---------------------------------------------
-max load of cable 0: 255.8940586607307
-max load of cable 1: 107.36092974787603
-max load of cable 2: 108.0
+max load of cable 0: 262.2614125358328
+max load of cable 1: 104.85452426099727
+max load of cable 2: 115.15531200783475
 max load of cable 3: 144
-max load of cable 4: 254.604976863248
-max load of cable 5: 78.00000000000003
-max load of cable 6: 146.68850564991217
+max load of cable 4: 272.8165356850436
+max load of cable 5: 72.69582577067804
+max load of cable 6: 178.40826784252172
 max load of cable 7: 150
-max load of cable 8: 96.0
-max load of cable 9: 493.7881173214613
+max load of cable 8: 92.8545242609973
+max load of cable 9: 527.6330713700872
 ---------------------------------------------
-overload of cable 0: 0.018168364693184176
+overload of cable 0: 0.01981159488724668
 overload of cable 1: 0.0
 overload of cable 2: 0.0
 overload of cable 3: 0.0
-overload of cable 4: 0.021974431747143607
+overload of cable 4: 0.027463767336219833
 overload of cable 5: 0.0
 overload of cable 6: 0.0
 overload of cable 7: 0.0
 overload of cable 8: 0.0
 overload of cable 9: 0.0
-overload of network: 0.09707461230957351
+overload of network: 0.09561965034689268
 ---------------------------------------------
-total number of vehicles: 5016
-fraction of non-served vehicles: 0.6000797448165869
-average number of non-served vehicles per day: 430.0
+total number of vehicles: 4988
+fraction of non-served vehicles: 0.785485164394547
+average number of non-served vehicles per day: 559.7142857142857

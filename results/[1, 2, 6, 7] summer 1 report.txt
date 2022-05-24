@@ -11,33 +11,33 @@ parked vehicles maximum on parking 5: 60/60
 parked vehicles maximum on parking 6: 60/60
 parked vehicles maximum on parking 7: 50/50
 ---------------------------------------------
-percentage of vehicles with a delay: 34.953214609115605%
-average delay over all vehicles: 9.618385170731425e-14 minutes
+percentage of vehicles with a delay: 34.51855123674912%
+average delay over all vehicles: 9.050396866960225e-14 minutes
 maximum delay: 9.094947017729282e-13 minutes
 ---------------------------------------------
-max load of cable 0: 579.8123908569333
-max load of cable 1: 211.4013876091086
-max load of cable 2: 276.1545059975207
-max load of cable 3: 240
-max load of cable 4: 705.9718695004265
-max load of cable 5: 186.0
-max load of cable 6: 360.1545059975207
-max load of cable 7: 192
-max load of cable 8: 204.1545059975207
-max load of cable 9: 1243.9437390008527
+max load of cable 0: 540.2006365723155
+max load of cable 1: 182.38159234866464
+max load of cable 2: 328.94735646845385
+max load of cable 3: 186
+max load of cable 4: 706.1828924981457
+max load of cable 5: 169.13660930396864
+max load of cable 6: 371.0914462490727
+max load of cable 7: 204
+max load of cable 8: 234.0
+max load of cable 9: 1191.5263693946588
 ---------------------------------------------
-overload of cable 0: 0.2580879530127366
+overload of cable 0: 0.3432010221176007
 overload of cable 1: 0.0
-overload of cable 2: 0.012480303189439051
-overload of cable 3: 0.0036313677842216853
-overload of cable 4: 0.3063237610723366
+overload of cable 2: 0.027749417876140114
+overload of cable 3: 0.0
+overload of cable 4: 0.4065647043566998
 overload of cable 5: 0.0
-overload of cable 6: 0.10165236189793185
+overload of cable 6: 0.14318036868038062
 overload of cable 7: 0.0
-overload of cable 8: 0.0
-overload of cable 9: 0.019633647752467624
-overload of network: 0.3333876776028483
+overload of cable 8: 0.003798280437829741
+overload of cable 9: 0.010519933989190615
+overload of network: 0.44741097098366805
 ---------------------------------------------
-total number of vehicles: 3313
-fraction of non-served vehicles: 0.3513431934802294
-average number of non-served vehicles per day: 166.28571428571428
+total number of vehicles: 4528
+fraction of non-served vehicles: 0.4573763250883392
+average number of non-served vehicles per day: 295.85714285714283
