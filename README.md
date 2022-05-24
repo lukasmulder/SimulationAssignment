@@ -1,6 +1,7 @@
 TODO:
-  - Implement solar energy
-    - implement statistics?
+  - Statistics
+    - Solar fraction
+    - Price
   - Input analysis
   - Output analysis
 

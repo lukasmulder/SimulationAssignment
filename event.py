@@ -59,9 +59,7 @@ def parking(event, eventQ, parking, cables, global_queue, solar, season, csv, st
 
     #calculate relevant new variables
     charging_volume, connection_time, delay = generate_time(csv)
-    car = Car(current_time, charging_volume, connection_time, loc=loc, status = "parked")
-
-    update_delay_statistics(statistics, delay)
+    car = Car(current_time, charging_volume, connection_time, delay, loc=loc, status = "parked")
 
     #update the model
     parking[loc].cars.append(car)
@@ -164,8 +162,12 @@ def finished_charging(event, eventQ, parking, cables, global_queue, solar, seaso
     insert_event(event, eventQ)
 
 def departure(event, eventQ, parking, cables, global_queue, solar, season, csv, statistics, strategy):
-    loc = event.loc #get the loc where the car is parked
+    current_time = event.time
+    loc = event.loc
     car = event.car
+
+    update_delay_statistics(statistics, current_time, car)
+
     parking[loc].cars.remove(car)
 
 def price_change(event, eventQ, parking, cables, global_queue, solar, season, csv, statistics, strategy):
