@@ -39,7 +39,7 @@ def generate_time(csv):
         #increase connection time
         connection_time = charging_time / 0.7
 
-    return charging_volume, connection_time, delay
+    return charging_volume, connection_time
 
 def normalize(list): #normalize a list
     summ = sum(list)

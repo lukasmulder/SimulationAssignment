@@ -1,5 +1,5 @@
 from state      import State, Car, update_flow, update_solar
-from statistics import Statistics, update_load_statistics, update_delay_statistics
+from statistics import Statistics, update_load_statistics, update_delay_statistics, update_solar_statistics
 from helper     import *
 from queue import PriorityQueue
 
@@ -58,8 +58,8 @@ def parking(event, eventQ, parking, cables, global_queue, solar, season, csv, st
     loc = event.loc
 
     #calculate relevant new variables
-    charging_volume, connection_time, delay = generate_time(csv)
-    car = Car(current_time, charging_volume, connection_time, delay, loc=loc, status = "parked")
+    charging_volume, connection_time = generate_time(csv)
+    car = Car(current_time, charging_volume, connection_time, loc=loc, status = "parked")
 
     #update the model
     parking[loc].cars.append(car)
@@ -180,6 +180,7 @@ def solar_change(event, eventQ, parking, cables, global_queue, solar, season, cs
     # needs to update all parking spots with solar
     # needs to be aware of preveous solar output
     update_solar(cables, parking, factor * 200, current_flow)
+    update_solar_statistics(current_time, statistics, factor)
 
     event = Event(current_time + 60, "solar change", flow = factor * 200)
     insert_event(event, eventQ)

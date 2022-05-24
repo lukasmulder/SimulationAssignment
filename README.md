@@ -2,7 +2,7 @@ TODO:
   - Statistics
     - Solar fraction
     - Price
-  - Input analysis
+    - Delay statistics
   - Output analysis
 
 Questions:

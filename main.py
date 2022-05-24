@@ -57,15 +57,17 @@ def main(run_time, season, solar_locations, filename, strategy, verbose = False)
             print_state(state)
 
     #generate final report
-    generate_report(run_time, state, statistics, season, solar_locations, strategy, filename)
+    #generate_report(run_time, state, statistics, season, solar_locations, strategy, filename)
     #save_data(run_time, state, statistics, season, solar_locations, strategy, filename)
     #dump_load_over_time(statistics)
     #plot_load_over_time(statistics)
+    #plot_solar_over_time(statistics, solar_locations)
+    plot_solar_percentage_over_time(statistics, solar_locations)
 
 solar_locations = [[],[1,2], [1,2,6,7]]
 strategies = [1,2,3,4]
 seasons = ["summer", "winter"]
-run_time = 60*24*7
+run_time = 60*24*3
 
 t0 = time.time()
 
@@ -78,6 +80,8 @@ t0 = time.time()
 #         else:
 #             #print("base case \nstrategy: {}".format(strategy))
 #             main(run_time, "winter", solar_location, "./results/base {}".format(strategy), strategy, verbose = False) #season doesnt matter if there are no solar panels
+
+main(run_time, "winter", solar_locations[1], "./results/test.txt", strategies[0], verbose = False)
 
 t1 = time.time()
 

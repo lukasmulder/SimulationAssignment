@@ -14,6 +14,8 @@ class Statistics:
                               , 9 : [(0,0)]
                               }
 
+        self.solar_factor_over_time = []
+
         self.parked_vehicles_maximum =    { 1 : 0
                                           , 2 : 0
                                           , 3 : 0
@@ -40,11 +42,13 @@ def update_load_statistics(current_time, statistics, cables):
         if (load_over_time[-1][1] != cables[loc].flow): #only append the array if the load over a cable changes
             load_over_time.append( (current_time, cables[loc].flow) )
 
+def update_solar_statistics(current_time, statistics, energy):
+    statistics.solar_factor_over_time.append((current_time, energy))
+
 def update_delay_statistics(statistics, current_time, car):
     arrival_time = car.arrival_time
-    initial_delay = car.initial_delay
     connection_time = car.connection_time
-    delay = current_time - arrival_time - connection_time + initial_delay
+    delay = current_time - arrival_time - connection_time
     if delay > 0:
         statistics.total_delay_time += delay
         statistics.maximum_dalay_time = max(delay, statistics.maximum_dalay_time)
@@ -130,10 +134,31 @@ def dump_load_over_time(statistics):
             f.write("{}; {}\n".format(x[0],x[1]))
         f.write("\n")
 
-def plot_load_over_time(statistics):
+def plot_load_over_time(statistics) :
     for loc, load_over_time in statistics.load_over_time.items():
         plt.subplot(2,5,loc + 1)
         plt.plot([x[0] for x in load_over_time], [x[1] for x in load_over_time])
+    plt.show()
+
+def plot_solar_over_time(statistics, solar_locations):
+    plt.plot([x[0] for x in statistics.solar_factor_over_time], [x[1]*200*len(solar_locations) for x in statistics.solar_factor_over_time])
+    plt.show()
+
+def plot_solar_percentage_over_time(statistics, solar_locations):
+    num_of_panels = len(solar_locations)
+    fractions = []
+    i = 0
+    for load in statistics.load_over_time[9]:
+        if statistics.solar_factor_over_time[i][0] <= load[0] and i + 1 < len(statistics.solar_factor_over_time):
+            i += 1
+        solar_factor = statistics.solar_factor_over_time[i][1]
+        solar = solar_factor * 200 * num_of_panels
+
+        fraction = solar/(solar + load[1])
+        fractions.append((load[0], fraction))
+
+    plt.plot([x[0] for x in fractions], [x[1]*len(solar_locations) for x in fractions])
+    #plt.plot([x[0] for x in statistics.solar_factor_over_time], [x[1]*200*len(solar_locations) for x in statistics.solar_factor_over_time])
     plt.show()
 
 def overload_in_cable(run_time, loc, load_over_time, cable_threshold):
@@ -147,7 +172,6 @@ def overload_in_cable(run_time, loc, load_over_time, cable_threshold):
         overload_time += run_time - load_over_time[-1][0]
 
     return overload_time/run_time
-
 
 def overload_in_network(run_time, statistics):
     overload_intervals = []

@@ -5,7 +5,6 @@ class Car:
         self.arrival_time = time
         self.volume = volume # charging volume
         self.connection_time = connection_time
-        self.initial_delay = delay
         self.loc = loc
         self.status = status # Either "parked", "charging", "finished"
 
