@@ -1,0 +1,45 @@
+solar locations: [1, 2] 
+season: winter 
+strategy: 1
+run time was: 43200 minutes (720.0 hours)
+---------------------------------------------
+parked vehicles maximum on parking 1: 60/60
+parked vehicles maximum on parking 2: 80/80
+parked vehicles maximum on parking 3: 60/60
+parked vehicles maximum on parking 4: 70/70
+parked vehicles maximum on parking 5: 60/60
+parked vehicles maximum on parking 6: 60/60
+parked vehicles maximum on parking 7: 50/50
+---------------------------------------------
+percentage of vehicles with a delay: 0.0%
+average delay over all vehicles: 0.0 minutes
+maximum delay: 0 minutes
+---------------------------------------------
+max load of cable 0: 492.00000000000057
+max load of cable 1: 174.00000000000006
+max load of cable 2: 245.99999999999997
+max load of cable 3: 126
+max load of cable 4: 540
+max load of cable 5: 102
+max load of cable 6: 276
+max load of cable 7: 144
+max load of cable 8: 180
+max load of cable 9: 1032.0
+---------------------------------------------
+overload of cable 0: 0.5159191454188561
+overload of cable 1: 0.0
+overload of cable 2: 0.0014592377817776079
+overload of cable 3: 0.0
+overload of cable 4: 0.5218937441120479
+overload of cable 5: 0.0
+overload of cable 6: 0.006308672889837015
+overload of cable 7: 0.0
+overload of cable 8: 0.0
+overload of cable 9: 0.0
+overload of network: 0.5233197617078561
+---------------------------------------------
+total revenue: 437.92315163053553, of which solar revenue: 16.88000119568517
+---------------------------------------------
+total number of vehicles: 736
+fraction of non-served vehicles: 0.47554347826086957
+average number of non-served vehicles per day: None

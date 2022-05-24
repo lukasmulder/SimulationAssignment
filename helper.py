@@ -177,4 +177,5 @@ def check_skip_line(cables,first_parking, later_parking, flow_change):
     update_flow(cables, later_parking, -flow_change) # remember to make the change undoneg
     return True
 
-good_price_reduc(1,18*6,48*60)
+def revenue(load_over_time):
+    return list(map(lambda x : (x[0],x[1],convert_time_price(x[0])), load_over_time ) )

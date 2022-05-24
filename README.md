@@ -9,12 +9,11 @@ Cat:
   - model schrijven
   - confidence lezen en implementeren
 
-Lukas: 
-  - statistiekjes van alle measures
+Lukas:
   - graphs
   - tabellen
     - Solar placement vs. season & strat -> cost, delay
-  - run 1 maand
+  - run 1 maand (ez)
 
 Questions:
   - Price changes as events?
