@@ -57,12 +57,12 @@ def main(run_time, season, solar_locations, filename, strategy, verbose = False)
             print_state(state)
 
     #generate final report
-    #generate_report(run_time, state, statistics, season, solar_locations, strategy, filename)
+    generate_report(run_time, state, statistics, season, solar_locations, strategy, filename)
     #save_data(run_time, state, statistics, season, solar_locations, strategy, filename)
     #dump_load_over_time(statistics)
     #plot_load_over_time(statistics)
     #plot_solar_over_time(statistics, solar_locations)
-    plot_solar_percentage_over_time(statistics, solar_locations)
+    # plot_solar_percentage_over_time(statistics, solar_locations)
 
 solar_locations = [[],[1,2], [1,2,6,7]]
 strategies = [1,2,3,4]

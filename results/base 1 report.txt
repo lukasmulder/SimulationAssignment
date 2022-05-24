@@ -1,0 +1,42 @@
+base case 
+strategy: 1
+run time was: 10080 minutes (168.0 hours)
+---------------------------------------------
+parked vehicles maximum on parking 1: 60/60
+parked vehicles maximum on parking 2: 80/80
+parked vehicles maximum on parking 3: 60/60
+parked vehicles maximum on parking 4: 70/70
+parked vehicles maximum on parking 5: 60/60
+parked vehicles maximum on parking 6: 60/60
+parked vehicles maximum on parking 7: 50/50
+---------------------------------------------
+percentage of vehicles with a delay: 32.137387880113764%
+average delay over all vehicles: 8.754571243297977e-14 minutes
+maximum delay: 9.094947017729282e-13 minutes
+---------------------------------------------
+max load of cable 0: 582
+max load of cable 1: 186
+max load of cable 2: 276
+max load of cable 3: 186
+max load of cable 4: 660
+max load of cable 5: 186
+max load of cable 6: 360
+max load of cable 7: 198
+max load of cable 8: 216
+max load of cable 9: 1158
+---------------------------------------------
+overload of cable 0: 0.4357929152240488
+overload of cable 1: 0.0
+overload of cable 2: 0.03707411797481975
+overload of cable 3: 0.0
+overload of cable 4: 0.5589744208514397
+overload of cable 5: 0.0
+overload of cable 6: 0.14480613351494326
+overload of cable 7: 0.0
+overload of cable 8: 0.0
+overload of cable 9: 0.008305267275290178
+overload of network: 0.5893432421387456
+---------------------------------------------
+total number of vehicles: 4571
+fraction of non-served vehicles: 0.5022970903522205
+average number of non-served vehicles per day: 328.0

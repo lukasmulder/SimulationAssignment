@@ -87,7 +87,7 @@ def parking(event, eventQ, parking, cables, global_queue, solar, season, csv, st
                 queue.put((current_time, car))
                 global_queue.put((current_time, car))
             elif strategy == 4 :
-                charging_time = (charging_volume / 6) * 60
+                charging_time = charging_volume *10
                 latest_start_time = current_time + connection_time - charging_time
                 queue.put((latest_start_time,car))
                 global_queue.put((latest_start_time,car))
