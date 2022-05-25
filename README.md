@@ -1,8 +1,4 @@
 TODO:
-  - Statistics
-    - Solar fraction
-    - Price
-    - Delay statistics
   - Output analysis
 
 Cat:
@@ -32,6 +28,7 @@ Assumptions:
   - Rate change is applied instantly and starts a new proces
   - for ELFS: first car is prioritized, otherwise first in line that does not "get in the way" of the first in line
   - Global queue assumption
+  - surplus solar energy is lost
 
 Model:
   - State: Parking lots, charging network, cars

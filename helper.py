@@ -16,16 +16,22 @@ def import_from_csv(filename):
 def generate_arrival_time(current_time, csv):
     time_hour = int(current_time/60 % 24)
     time_minute = current_time % 60
+    extra_hours = 0
+
     rate = (750*csv["arrival"][time_hour]) / 60 # this function should give the rate of cars per minute
     p = random.random()
     arrival_time = - math.log(1 - p) / rate
-    if arrival_time + time_minute > 60: # if we have a rate change (due to the next hour approaching), generate a new arrival time within the next hour
-        rate = (750*csv["arrival"][(time_hour + 1) % 24]) / 60 # this function should give the rate of cars per minute
+
+
+    while arrival_time + time_minute > 60: # if we have a rate change (due to the next hour approaching), generate a new arrival time within the next hour
+        time_minute = 0
+        extra_hours += 1
+
+        rate = (750*csv["arrival"][(time_hour + extra_hours) % 24]) / 60 # this function should give the rate of cars per minute
         p = random.random()
         arrival_time = - math.log(1 - p) / rate
-        return current_time - time_minute + 60 + arrival_time # schedule the arrival time in the next hour.
-    else:
-        return current_time + arrival_time
+
+    return (int(current_time/60) + extra_hours) * 60 + time_minute + arrival_time
 
 def generate_time(csv):
     #generates charging volume and connection time
