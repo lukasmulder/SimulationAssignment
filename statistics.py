@@ -71,10 +71,10 @@ class Statistics:
             cable_threshold = 200 if loc != 9 else 1000
 
             for i in range(len(load_over_time) - 1):
-                if load_over_time[i][1] > cable_threshold:
+                if abs(load_over_time[i][1]) > cable_threshold:
                     overload_intervals.append((load_over_time[i][0], load_over_time[i + 1][0]))
 
-            if load_over_time[-1][1] > cable_threshold:
+            if abs(load_over_time[-1][1]) > cable_threshold:
                 overload_intervals.append((load_over_time[-1][0], run_time))
 
         # Sorting based on the increasing order

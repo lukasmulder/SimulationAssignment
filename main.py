@@ -111,10 +111,10 @@ for solar_location in solar_locations:
             f.write("base {}\n".format(strategy))
             plot_load_over_time(merge_statistics(all_statistics), solar_location, "base {}".format(strategy))
 
-# all_statistics = main(run_time, "summer", solar_locations[2], "./results/test", 3, verbose = False)
-# statistic = merge_statistics(all_statistics)
-# #measures = calculate_average_measures(all_statistics, run_time, warm_up, solar_locations[0])
-# #f.write("{}; {}; {}; {}; ".format(*measures))
+#all_statistics = main(run_time, "summer", solar_locations[2], "./results/test", 1, verbose = False)
+#statistic = merge_statistics(all_statistics)
+#measures = calculate_average_measures(all_statistics, run_time, warm_up, solar_locations[0])
+#f.write("{}; {}; {}; {}; ".format(*measures))
 
 t1 = time.time()
 f.write("total time: {} seconds".format(t1-t0))

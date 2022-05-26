@@ -183,6 +183,24 @@ def solar_change(event, eventQ, parking, cables, global_queue, solar, season, cs
     update_solar(cables, parking, factor * 200, current_flow)
     update_solar_statistics(current_time, statistics, factor)
 
+    #schedule start charging for next car in queue
+    if strategy == 3 or strategy == 4:
+        #queue = parking[loc].queue
+        if not global_queue.empty():
+            time, next_car = global_queue.get() # check which car in the global queue is next
+            next_loc = next_car.loc
+
+            if check_charging_possibility(cables, parking[next_loc], 6): #check we can charge the next car in the queue
+                #get car from local queue
+                parking[next_loc].queue.get()
+
+                #schedule start charging of first car from queue
+                event = Event(current_time, "start charging", loc = next_loc, car = next_car)
+                insert_event(event, eventQ)
+            else:
+                #reinsert
+                global_queue.put((time,next_car))
+
     event = Event(current_time + 60, "solar change", flow = factor * 200)
     insert_event(event, eventQ)
 
@@ -196,7 +214,6 @@ event_handler_dictionary = {
     "stop charging"     : stop_charging,
     "finished charging" : finished_charging,
     "departure"         : departure,
-    "price change"      : price_change,
     "solar change"      : solar_change
 }
 
