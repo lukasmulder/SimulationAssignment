@@ -86,13 +86,13 @@ def _find_parents(cables,parents):
         return parents
 
 def print_state(state):
-    print("Parking (id, free, charging)")
+    print("Parking (id, #cars, free, charging)")
     for id, loc in state.parking.items():
 
         free = loc.capacity - len(loc.cars)
         charging = len(list(filter( lambda x: x.status == "charging", loc.cars)))
 
-        print(loc.id, free, charging)
+        print(loc.id, len(loc.cars), free, charging)
     print()
     print("Cables (id, capacity, flow)")
     for id, cable in state.cables.items():

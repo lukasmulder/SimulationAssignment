@@ -148,8 +148,8 @@ class Statistics:
             duration = total_demand_over_t[i+1][0] - total_demand_over_t[i][0]
             demand = total_demand_over_t[i][1]
             price = convert_time_price(total_demand_over_t[i][0])
-            revenue += price * duration / 60 # transform to kWh
-            solar_revenue += solar_fraction_over_t[i][1] * price * duration / 60 # transform to kWh
+            revenue += demand * price * duration / 60 # transform to kWh
+            solar_revenue += solar_fraction_over_t[i][1] * demand * price * duration / 60 # transform to kWh
 
         return revenue, solar_revenue
 

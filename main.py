@@ -59,11 +59,11 @@ def main(run_time, season, solar_locations, fname, strategy, verbose = False):
 
         #print extra information if needed
         if verbose:
-            print_eventQ(eventQ)
-            print()
-            print("Current event")
-            print_event(eventQ[0])
-            print("---------------------")
+            # print_eventQ(eventQ)
+            # print()
+            # print("Current event")
+            # print_event(eventQ[0])
+            # print("---------------------")
             print_state(state)
 
     all_statistics.append(statistics)
@@ -111,8 +111,9 @@ for solar_location in solar_locations:
             f.write("base {}\n".format(strategy))
             plot_load_over_time(merge_statistics(all_statistics), solar_location, "base {}".format(strategy))
 
-# all_statistics = main(run_time, "winter", solar_locations[1], "./results/test", strategies[3], verbose = False)
-# measures = calculate_average_measures(all_statistics, run_time, warm_up, solar_locations[1])
+# all_statistics = main(run_time, "winter", solar_locations[0], "./results/test", strategies[3], verbose = True)
+# statistic = merge_statistics(all_statistics)
+# measures = calculate_average_measures(all_statistics, run_time, warm_up, solar_locations[0])
 # f.write("{}; {}; {}; {}; ".format(*measures))
 
 t1 = time.time()
