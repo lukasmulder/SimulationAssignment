@@ -3,7 +3,7 @@ from state import State, print_state, find_parents
 from event import Event, print_event, print_eventQ, event_handler, import_from_csv
 from solar import Solar
 from statistics import *
-from output import calculate_average_measures, save_measures, merge_statistics
+from output import *
 from queue import PriorityQueue
 
 
@@ -91,25 +91,27 @@ run_time = 24*60*warm_up + 60*24*60
 
 t0 = time.time()
 
-f = open("./results/results.csv", "w")
-f.write("run time: {}; warm up: {}\n".format(run_time, warm_up))
-f.write("average_delay; average_revenue; average_solar_revenue; average_overload_percentage; strategy\n")
+prepare_save_files(run_time, warm_up)
 
-for solar_location in solar_locations:
-    for strategy in strategies:
+for strategy in strategies:
+    for solar_location in solar_locations:
         if solar_location != []:
-            for season in seasons:
-                all_statistics = main(run_time, season, solar_location, "./results/{} {} {}".format(solar_location, season, strategy), strategy, verbose = False)
-                measures = calculate_average_measures(all_statistics, run_time, warm_up, solar_location)
-                f.write("{}; {}; {}; {}; ".format(*measures))
-                f.write("{} {} {}\n".format(solar_location, season, strategy))
-                plot_load_over_time(merge_statistics(all_statistics), solar_location, "{} {} {}".format(solar_location, season, strategy))
+            s_statistics = main(run_time, "summer", solar_location, "", strategy, verbose = False)
+            w_statistics = main(run_time, "winter", solar_location, "", strategy, verbose = False)
+            save_data(run_time, warm_up, s_statistics, w_statistics, solar_location, strategy)
+
+            # measures = calculate_average_measures(all_statistics, run_time, warm_up, solar_location)
+            # f.write("{}; {}; {}; {}; ".format(*measures))
+            # f.write("{} {} {}\n".format(solar_location, season, strategy))
+            # plot_load_over_time(merge_statistics(all_statistics), solar_location, "{} {} {}".format(solar_location, season, strategy))
         else:
-            all_statistics = main(run_time, "winter", solar_location, "./results/base {}".format(strategy), strategy, verbose = False) #season doesnt matter if there are no solar panels
-            measures = calculate_average_measures(all_statistics, run_time, warm_up, solar_location)
-            f.write("{}; {}; {}; {}; ".format(*measures))
-            f.write("base {}\n".format(strategy))
-            plot_load_over_time(merge_statistics(all_statistics), solar_location, "base {}".format(strategy))
+            all_statistics = main(run_time, "winter", solar_location, "", strategy, verbose = False) #season doesnt matter if there are no solar panels
+            save_data(run_time, warm_up, all_statistics, all_statistics, solar_location, strategy)
+
+            # measures = calculate_average_measures(all_statistics, run_time, warm_up, solar_location)
+            # f.write("{}; {}; {}; {}; ".format(*measures))
+            # f.write("base {}\n".format(strategy))
+            # plot_load_over_time(merge_statistics(all_statistics), solar_location, "base {}".format(strategy))
 
 #all_statistics = main(run_time, "summer", solar_locations[2], "./results/test", 1, verbose = False)
 #statistic = merge_statistics(all_statistics)
@@ -117,5 +119,4 @@ for solar_location in solar_locations:
 #f.write("{}; {}; {}; {}; ".format(*measures))
 
 t1 = time.time()
-f.write("total time: {} seconds".format(t1-t0))
-f.close()
+print("total time: {} seconds".format(t1-t0))

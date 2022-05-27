@@ -2,24 +2,62 @@ from statistics import Statistics
 
 def calculate_average_measures(statistics, run_time, warm_up, solar_locations):
     # returns:
-    # - avg delay percentage
-    # - avg revenue per day
-    # - avg percentage of time with overload on network
+        # ["./results/average_delay.csv",
+        #  "./results/average_max_delay.csv",
+        #  "./results/average_delay_fraction.csv",
+        #  "./results/average_revenue.csv",
+        #  "./results/average_solar_revenue.csv",
+        #  "./results/average_overload.csv",
+        #  "./results/average_max_load.csv",
+        #  "./results/average_served.csv"
+        #  "./results/average_non_served.csv",
+        #  "./results/average_fraction_non_served.csv"
 
     days = len(statistics) - warm_up
 
+    measures = []
+
     average_delays = list(map(lambda x : x.average_delay(), statistics[warm_up:]))
+    measures.append(average_delays)
+    average_max_delays = list(map(lambda x : x.maximum_dalay_time, statistics[warm_up:]))
+    measures.append(average_max_delays)
+    average_delay_fractions = list(map(lambda x : x.cars_with_delay/x.total_vehicles, statistics[warm_up:]))
+    measures.append(average_delay_fractions)
+
     average_revenues = list(map(lambda x : x.revenue(solar_locations)[0], statistics[warm_up:]))
+    measures.append(average_revenues)
     average_solar_revenues = list(map(lambda x : x.revenue(solar_locations)[1], statistics[warm_up:]))
+    measures.append(average_solar_revenues)
+
     average_overload_percentages = list(map(lambda x : x.overload_in_network(run_time/days), statistics[warm_up:]))
+    measures.append(average_overload_percentages)
+    average_max_loads = list(map(lambda x : x.max_load(9), statistics[warm_up:]))
+    measures.append(average_max_loads)
 
+    average_serveds = list(map(lambda x : x.total_vehicles - x.non_served_vehicles, statistics[warm_up:]))
+    measures.append(average_serveds)
+    average_non_serveds = list(map(lambda x : x.non_served_vehicles, statistics[warm_up:]))
+    measures.append(average_non_serveds)
+    average_fraction_non_serveds = list(map(lambda x : x.non_served_vehicles/x.total_vehicles, statistics[warm_up:]))
+    measures.append(average_fraction_non_serveds)
 
-    average_delay = sum(average_delays)/days
-    average_revenue = sum(average_revenues)/days
-    average_solar_revenue = sum(average_solar_revenues)/days
-    average_overload_percentage =  sum(average_overload_percentages)/days
+    measures = list(map(lambda x : sum(x)/days, measures))
 
-    return average_delay, average_revenue, average_solar_revenue, average_overload_percentage
+    # average_delay = sum(average_delays)/days
+    # average_max_delay = sum(average_max_delays)/days
+    # average_delay_fraction = sum(average_delay_fractions)/days
+    #
+    # average_revenue = sum(average_revenues)/days
+    # average_solar_revenue = sum(average_solar_revenues)/days
+    #
+    # average_overload_percentage = sum(average_overload_percentages)/days
+    # average_max_load = sum(average_max_loads)/days
+    #
+    # average_served = sum(average_serveds)/days
+    # average_non_served = sum(average_non_serveds)/days
+    # average_fraction_non_served = sum(average_fraction_non_serveds)/days
+
+    return measures
 
 def save_measures(statistics, run_time, warm_up, solar_locations, fname):
     measures = calculate_average_measures(statistics, run_time, warm_up, solar_locations)
@@ -52,7 +90,7 @@ def merge_statistics(statistics):
 
     return statistic
 
-def save_data(run_time, state, statistics, season, solar_locations, strategy, fname):
+def _save_data(run_time, state, statistics, season, solar_locations, strategy, fname):
     f = open(fname + " data.txt", 'w')
     if solar_locations != []:
         f.write("solar locations: {}, season: {}, strategy: {}, run time: {}\n".format(solar_locations, season, strategy, run_time))
@@ -84,3 +122,63 @@ def save_data(run_time, state, statistics, season, solar_locations, strategy, fn
     f.write("fraction of non-served vehicles\n{}\n".format( statistics.non_served_vehicles/statistics.total_vehicles) )
     f.write("average number of non-served vehicles per day\n{}\n".format( statistics.non_served_vehicles * 1440/run_time) )
     f.close()
+
+def save_data(run_time, warm_up, s_statistics, w_statistics, solar_locations, strategy):
+    s_measures = calculate_average_measures(s_statistics, run_time, warm_up, solar_locations)
+    w_measures = calculate_average_measures(w_statistics, run_time, warm_up, solar_locations)
+
+    paths = ["./results/average_delay.csv",
+             "./results/average_max_delay.csv",
+             "./results/average_delay_fraction.csv",
+             "./results/average_revenue.csv",
+             "./results/average_solar_revenue.csv",
+             "./results/average_overload.csv",
+             "./results/average_max_load.csv",
+             "./results/average_served.csv",
+             "./results/average_non_served.csv",
+             "./results/average_fraction_non_served.csv"
+             ]
+
+    strategy_dict = {1:"Base", 2:"Price driven",3:"FCFS",4:"ELFS"}
+    strategy_str = strategy_dict[strategy]
+
+    for i in range(len(paths)):
+        path = paths[i]
+        f = open(path, "a")
+        if len(solar_locations) == 0:
+            s = s_measures[i]
+            w = w_measures[i]
+            a = (s + w)/2
+            f.write(strategy_str + ";{};{};{}".format(s,w,a))
+        if len(solar_locations) == 4:
+            s = s_measures[i]
+            w = w_measures[i]
+            a = (s + w)/2
+            f.write("{};{};{}\n".format(s,w,a))
+        else:
+            s = s_measures[i]
+            w = w_measures[i]
+            a = (s + w)/2
+            f.write("{};{};{};".format(s,w,a))
+        f.close()
+
+def prepare_save_files(run_time, warm_up):
+    paths = ["./results/average_delay.csv",
+             "./results/average_max_delay.csv",
+             "./results/average_delay_fraction.csv",
+             "./results/average_revenue.csv",
+             "./results/average_solar_revenue.csv",
+             "./results/average_overload.csv",
+             "./results/average_max_load.csv",
+             "./results/average_served.csv",
+             "./results/average_non_served.csv",
+             "./results/average_fraction_non_served.csv"
+             ]
+
+    #prepare the files
+    for path in paths:
+        f = open(path, "w")
+        f.write("run time: {}; warm up: {}\n".format(run_time, warm_up))
+        f.write("Number of solar panels;0; ; ;2; ; ;4; ;\n")
+        f.write(";S;W;A;S;W;A;S;W;A\n")
+        f.close()

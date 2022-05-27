@@ -43,11 +43,12 @@ def arrival(event, eventQ, parking, cables, global_queue, solar, season, csv, st
             event = Event(current_time, "parking", loc = loc)
             insert_event(event, eventQ)
 
+            statistics.non_served_vehicles -= 1
+
             break
 
-        statistics.non_served_vehicles += 1
-
     statistics.total_vehicles += 1
+    statistics.non_served_vehicles += 1 # assume we can not serve the vehicle and then decrement it when we do serve it
 
     next_arrival_time = generate_arrival_time(current_time, csv)
     insert_event(Event(next_arrival_time, "arrival"), eventQ)
