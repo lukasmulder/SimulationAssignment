@@ -146,19 +146,19 @@ def save_data(run_time, warm_up, s_statistics, w_statistics, solar_locations, st
         path = paths[i]
         f = open(path, "a")
         if len(solar_locations) == 0:
-            s = round(s_measures[i], 2)
-            w = round(w_measures[i], 2)
-            a = round((s + w)/2, 2)
+            s = "{:4.2f}".format(s_measures[i])[0:6]
+            w = "{:4.2f}".format(w_measures[i])[0:6]
+            a = "{:4.2f}".format((s_measures[i]+w_measures[i])/2)[0:6]
             f.write(strategy_str + "&{}&{}&{}&".format(s,w,a))
         elif len(solar_locations) == 4:
-            s = round(s_measures[i], 2)
-            w = round(w_measures[i], 2)
-            a = round((s + w)/2, 2)
+            s = "{:4.2f}".format(s_measures[i])[0:6]
+            w = "{:4.2f}".format(w_measures[i])[0:6]
+            a = "{:4.2f}".format((s_measures[i]+w_measures[i])/2)[0:6]
             f.write("{}&{}&{} \\\\ \n".format(s,w,a))
         else:
-            s = round(s_measures[i], 2)
-            w = round(w_measures[i], 2)
-            a = round((s + w)/2, 2)
+            s = "{:4.2f}".format(s_measures[i])[0:6]
+            w = "{:4.2f}".format(w_measures[i])[0:6]
+            a = "{:4.2f}".format((s_measures[i]+w_measures[i])/2)[0:6]
             f.write("{}&{}&{}&".format(s,w,a))
         f.close()
 

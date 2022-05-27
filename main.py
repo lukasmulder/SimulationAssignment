@@ -86,8 +86,8 @@ def main(run_time, season, solar_locations, fname, strategy, verbose = False):
 solar_locations = [[],[6,7], [1,2,6,7]]
 strategies = [1,2,3,4]
 seasons = ["summer", "winter"]
-warm_up = 0 # number of days of warm_up
-run_time = 24*60*warm_up + 60*24*2
+warm_up = 2 # number of days of warm_up
+run_time = 24*60*warm_up + 60*24*60
 
 t0 = time.time()
 
