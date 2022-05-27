@@ -127,16 +127,16 @@ def save_data(run_time, warm_up, s_statistics, w_statistics, solar_locations, st
     s_measures = calculate_average_measures(s_statistics, run_time, warm_up, solar_locations)
     w_measures = calculate_average_measures(w_statistics, run_time, warm_up, solar_locations)
 
-    paths = ["./results/average_delay.csv",
-             "./results/average_max_delay.csv",
-             "./results/average_delay_fraction.csv",
-             "./results/average_revenue.csv",
-             "./results/average_solar_revenue.csv",
-             "./results/average_overload.csv",
-             "./results/average_max_load.csv",
-             "./results/average_served.csv",
-             "./results/average_non_served.csv",
-             "./results/average_fraction_non_served.csv"
+    paths = ["average_delay",
+             "average_max_delay",
+             "average_delay_fraction",
+             "average_revenue",
+             "average_solar_revenue",
+             "average_overload",
+             "average_max_load",
+             "average_served",
+             "average_non_served",
+             "average_fraction_non_served"
              ]
 
     strategy_dict = {1:"Base", 2:"Price driven",3:"FCFS",4:"ELFS"}
@@ -144,42 +144,66 @@ def save_data(run_time, warm_up, s_statistics, w_statistics, solar_locations, st
 
     for i in range(len(paths)):
         path = paths[i]
-        f = open(path, "a")
+        f = open("./results/" + path + ".tex", "a")
         if len(solar_locations) == 0:
-            s = "{:4.2f}".format(s_measures[i])[0:6]
-            w = "{:4.2f}".format(w_measures[i])[0:6]
-            a = "{:4.2f}".format((s_measures[i]+w_measures[i])/2)[0:6]
+            s = format_float(s_measures[i])
+            w = format_float(w_measures[i])
+            a = format_float((s_measures[i]+w_measures[i])/2)
             f.write(strategy_str + "&{}&{}&{}&".format(s,w,a))
         elif len(solar_locations) == 4:
-            s = "{:4.2f}".format(s_measures[i])[0:6]
-            w = "{:4.2f}".format(w_measures[i])[0:6]
-            a = "{:4.2f}".format((s_measures[i]+w_measures[i])/2)[0:6]
+            s = format_float(s_measures[i])
+            w = format_float(w_measures[i])
+            a = format_float((s_measures[i]+w_measures[i])/2)
             f.write("{}&{}&{} \\\\ \n".format(s,w,a))
         else:
-            s = "{:4.2f}".format(s_measures[i])[0:6]
-            w = "{:4.2f}".format(w_measures[i])[0:6]
-            a = "{:4.2f}".format((s_measures[i]+w_measures[i])/2)[0:6]
+            s = format_float(s_measures[i])
+            w = format_float(w_measures[i])
+            a = format_float((s_measures[i]+w_measures[i])/2)
             f.write("{}&{}&{}&".format(s,w,a))
         f.close()
 
+def format_float(x):
+    s = "{:.2f}".format(x)[0:6]
+    if s[-1] == '.':
+        s = s[:-1]
+    return s
+
 def prepare_save_files(run_time, warm_up):
-    paths = ["average_delay.csv",
-             "average_max_delay.csv",
-             "average_delay_fraction.csv",
-             "average_revenue.csv",
-             "average_solar_revenue.csv",
-             "average_overload.csv",
-             "average_max_load.csv",
-             "average_served.csv",
-             "average_non_served.csv",
-             "average_fraction_non_served.csv"
+    paths = ["average_delay",
+             "average_max_delay",
+             "average_delay_fraction",
+             "average_revenue",
+             "average_solar_revenue",
+             "average_overload",
+             "average_max_load",
+             "average_served",
+             "average_non_served",
+             "average_fraction_non_served"
              ]
 
     #prepare the files
     for path in paths:
-        f = open("./results/" + path, "w")
-        f.write(path + "\n")
-        f.write("run time: {}, warm up: {}\n".format(run_time, warm_up))
+        f = open("./results/" + path + ".tex", "w")
+        f.write("%" + path + "\n")
+        f.write("%run time: {}, warm up: {}\n".format(run_time, warm_up))
+        f.write("\\begin{table}[h] \n\\centering \n\\begin{tabular}{l|lll|lll|lll}")
         f.write("Number of \\\\ solar panels&0& & &2& & &4& & \\\\ \hline \n")
         f.write("Season or average & S & W & A & S & W & A & S & W & A \\\\ \hline \n")
+        f.close()
+
+def close_save_files():
+    paths = ["average_delay",
+             "average_max_delay",
+             "average_delay_fraction",
+             "average_revenue",
+             "average_solar_revenue",
+             "average_overload",
+             "average_max_load",
+             "average_served",
+             "average_non_served",
+             "average_fraction_non_served"
+             ]
+    for path in paths:
+        f = open("./results/" + path + ".tex", "a")
+        f.write("\\end{tabular} \n\\end{table}")
         f.close()
