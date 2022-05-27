@@ -146,39 +146,40 @@ def save_data(run_time, warm_up, s_statistics, w_statistics, solar_locations, st
         path = paths[i]
         f = open(path, "a")
         if len(solar_locations) == 0:
-            s = s_measures[i]
-            w = w_measures[i]
-            a = (s + w)/2
-            f.write(strategy_str + ";{};{};{}".format(s,w,a))
-        if len(solar_locations) == 4:
-            s = s_measures[i]
-            w = w_measures[i]
-            a = (s + w)/2
-            f.write("{};{};{}\n".format(s,w,a))
+            s = "{:4.2f}".format(s_measures[i])[0:6]
+            w = "{:4.2f}".format(w_measures[i])[0:6]
+            a = "{:4.2f}".format((s_measures[i]+w_measures[i])/2)[0:6]
+            f.write(strategy_str + "&{}&{}&{}&".format(s,w,a))
+        elif len(solar_locations) == 4:
+            s = "{:4.2f}".format(s_measures[i])[0:6]
+            w = "{:4.2f}".format(w_measures[i])[0:6]
+            a = "{:4.2f}".format((s_measures[i]+w_measures[i])/2)[0:6]
+            f.write("{}&{}&{} \\\\ \n".format(s,w,a))
         else:
-            s = s_measures[i]
-            w = w_measures[i]
-            a = (s + w)/2
-            f.write("{};{};{};".format(s,w,a))
+            s = "{:4.2f}".format(s_measures[i])[0:6]
+            w = "{:4.2f}".format(w_measures[i])[0:6]
+            a = "{:4.2f}".format((s_measures[i]+w_measures[i])/2)[0:6]
+            f.write("{}&{}&{}&".format(s,w,a))
         f.close()
 
 def prepare_save_files(run_time, warm_up):
-    paths = ["./results/average_delay.csv",
-             "./results/average_max_delay.csv",
-             "./results/average_delay_fraction.csv",
-             "./results/average_revenue.csv",
-             "./results/average_solar_revenue.csv",
-             "./results/average_overload.csv",
-             "./results/average_max_load.csv",
-             "./results/average_served.csv",
-             "./results/average_non_served.csv",
-             "./results/average_fraction_non_served.csv"
+    paths = ["average_delay.csv",
+             "average_max_delay.csv",
+             "average_delay_fraction.csv",
+             "average_revenue.csv",
+             "average_solar_revenue.csv",
+             "average_overload.csv",
+             "average_max_load.csv",
+             "average_served.csv",
+             "average_non_served.csv",
+             "average_fraction_non_served.csv"
              ]
 
     #prepare the files
     for path in paths:
-        f = open(path, "w")
-        f.write("run time: {}; warm up: {}\n".format(run_time, warm_up))
-        f.write("Number of solar panels;0; ; ;2; ; ;4; ;\n")
-        f.write(";S;W;A;S;W;A;S;W;A\n")
+        f = open("./results/" + path, "w")
+        f.write(path + "\n")
+        f.write("run time: {}, warm up: {}\n".format(run_time, warm_up))
+        f.write("Number of \\\\ solar panels&0& & &2& & &4& & \\\\ \hline \n")
+        f.write("Season or average & S & W & A & S & W & A & S & W & A \\\\ \hline \n")
         f.close()
