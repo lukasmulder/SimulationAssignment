@@ -258,16 +258,12 @@ def confidence_interval(data1, data2, confidence):
 def all_pairwise_comparison(data, confidence):
     k = len(data)
     number_of_intervals = int(k*(k-1)/2)
-    intervals = []
+    intervals = k*[k*[0]]
     for i in range(k):
-        for j in range(i+1,k):
-            print(i,j)
-            interval = confidence_interval(data[i],data[j],1- (1-confidence)/number_of_intervals)
-            intervals.append([i,j,interval])
+        for j in range(k):
+  
+            intervals[i][j] = confidence_interval(data[i],data[j],1- (1-confidence)/number_of_intervals)
     return intervals
 
 
-data = [[1,1,2],[1,1,1],[2,1,1]]
-# confidence_interval([2,1,2],data[1],1-0.05/6)
-print(all_pairwise_comparison(data, 0.95))
             
