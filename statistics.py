@@ -1,5 +1,6 @@
 from helper import convert_time_price, revenue
 import matplotlib.pyplot as plt
+import numpy as np, scipy.stats as st
 
 class Statistics:
     def __init__(self, day):
@@ -247,3 +248,26 @@ def plot_load_over_time(statistics, solar_locations, fname) :
 def plot_solar_over_time(statistics, solar_locations):
     plt.plot([x[0] for x in statistics.solar_factor_over_time], [x[1]*200*len(solar_locations) for x in statistics.solar_factor_over_time])
     plt.show()
+
+def confidence_interval(data1, data2, confidence):
+    a = [x-y for x,y in zip(data1,data2)]
+    interval = st.t.interval(0.95, len(a)-1, loc=np.mean(a), scale=st.sem(a))
+    return interval
+    
+#retursn list with [index data1, index data2, confidence interval]
+def all_pairwise_comparison(data, confidence):
+    k = len(data)
+    number_of_intervals = int(k*(k-1)/2)
+    intervals = []
+    for i in range(k):
+        for j in range(i+1,k):
+            print(i,j)
+            interval = confidence_interval(data[i],data[j],1- (1-confidence)/number_of_intervals)
+            intervals.append([i,j,interval])
+    return intervals
+
+
+data = [[1,1,2],[1,1,1],[2,1,1]]
+# confidence_interval([2,1,2],data[1],1-0.05/6)
+print(all_pairwise_comparison(data, 0.95))
+            
