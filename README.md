@@ -1,6 +1,5 @@
 TODO:
   - Run 2 months
-  - Load over time of all cables in one graph
-  - Confidence intervals
+  - Make results pretty
   - Interpret results
   - Write conclusion

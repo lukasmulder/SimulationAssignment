@@ -1,4 +1,4 @@
-from statistics import Statistics, all_pairwise_comparison, comparison_with_standard
+from statistics import *
 
 def calculate_average_measures(statistics, run_time, warm_up, solar_locations):
     # returns:
@@ -71,7 +71,7 @@ def save_measures(statistics, run_time, warm_up, solar_locations, fname):
 
 #takes a list of statistics and merges them, assuming they are ordered by time.
 def merge_statistics(statistics):
-    statistic = Statistics(None)
+    statistic = Statistics(len(statistics))
     for s in statistics:
         for loc, load_over_time in s.load_over_time.items():
             statistic.load_over_time[loc] += load_over_time
@@ -230,6 +230,8 @@ def compute_statistics(all_statistics, standard, confidence):
                 ("fraction_blackout", fraction_blackout, (standard[0], [s.overload_in_network(24*60) for s in standard[1]])  )
                 ]
 
+    intervals_list = []
+
     f = open("./results/confidence_intervals.txt", "w")
     for n, m, s in measures:
         f.write(n + "\n\n")
@@ -241,4 +243,7 @@ def compute_statistics(all_statistics, standard, confidence):
         for x in comparison_with_standard(s, m, confidence):
             f.write(",".join(str(item) for item in x))
             f.write("\n")
+        intervals = comparison_with_standard(s, m, confidence)
+        intervals_list.append((n, intervals))
+    plot_confidence_intervals(intervals_list)
     f.close()

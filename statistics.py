@@ -282,25 +282,25 @@ def comparison_with_standard(standard, data, confidence):
 
     return intervals
 
-def plot_confidence_intervals(intervals, horizontal_line_width = 0.25, color = '#2187bb'):
-    x=0
-    names =[]
-    for name,interval in intervals:
-        x+=1
-        names.append(name)
-        bottom,top = interval
-        mean = (right + left)/2
-        left = x - horizontal_line_width / 2
-        right = x + horizontal_line_width / 2
-        plt.plot([x, x], [top, bottom], color=color)
-        plt.plot([left, right], [top, top], color=color)
-        plt.plot([left, right], [bottom, bottom], color=color)
-        plt.plot(x, mean, 'o', color='#f44336')
-        
-    plt.xticks(range(1,len(intervals)+1), names)
-    plt.title("Confidence Intervals")
-    plt.show()
+def plot_confidence_intervals(intervals_list, horizontal_line_width = 0.25, color = '#2187bb'):
+    num_of_plots = len(intervals_list)
+    for i in range(num_of_plots):
+        intervals = intervals_list[i][1]
+        plt.subplot(1,num_of_plots,i+1)
+        x = 0
+        names = []
+        for name, interval in intervals:
+            x += 1
+            names.append(name)
+            bottom,top = interval
+            mean = bottom+(top-bottom)/2
+            left = x - horizontal_line_width / 2
+            right = x + horizontal_line_width / 2
+            plt.plot([x, x], [top, bottom], color=color)
+            plt.plot([left, right], [top, top], color=color)
+            plt.plot([left, right], [bottom, bottom], color=color)
+            plt.plot(x, mean, 'o', color='#f44336')
 
-    
-    
-            
+        plt.xticks(range(1,len(intervals)+1), names)
+        plt.title(str(intervals_list[i][0]))
+    plt.show()

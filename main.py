@@ -4,6 +4,7 @@ from event import Event, print_event, print_eventQ, event_handler, import_from_c
 from solar import Solar
 from statistics import *
 from output import *
+from plotting import *
 from queue import PriorityQueue
 
 
@@ -118,6 +119,9 @@ for strategy in strategies:
 compute_statistics(all_statistics, (standard, all_statistics[standard]), confidence)
 
 close_save_files()
+
+# statistics = main(run_time, "winter", [], "", 1, verbose = False) #season doesnt matter if there are no solar panels
+# plot_all_cable_loads(merge_statistics(statistics),  None)
 
 t1 = time.time()
 print("total time: {} seconds".format(t1-t0))
