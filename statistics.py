@@ -283,8 +283,5 @@ def comparison_with_standard(standard, data, confidence):
         
     return intervals
 
-data= [("nul", [2,1,2]), ("een",[2,2,2]), ("twee", [3,2,4])]
-print(all_pairwise_comparison(data,0.95))
-
 
             
