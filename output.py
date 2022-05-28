@@ -217,25 +217,22 @@ def close_save_files():
 # - percentage of time with blackout
 # - (inter-cable blackout percentage comparison)
 def compute_statistics(all_statistics, standard, confidence):
-    data = all_statistics.values()
-    revenues = []
-    average_delays = []
-    fraction_non_served = []
-    fraction_blackout = []
-    for d in data:
-        revenues.append(list(map(lambda x : x.revenue([])[0], d)))
-        average_delays.append(list(map(lambda x : x.average_delay(), d)))
-        fraction_non_served.append(list(map(lambda x : x.non_served_vehicles_fraction(), d)))
-        fraction_blackout.append(list(map(lambda x : x.overload_in_network(24*60), d)))
+    data = all_statistics.items()
 
-    measures = [("revenue", revenues, list(map(lambda x : x.revenue([])[0], standard))),
-                ("average_delays", average_delays, list(map(lambda x : x.average_delay(), standard))),
-                ("fraction_non_served",fraction_non_served, list(map(lambda x : x.non_served_vehicles_fraction(), standard))),
-                ("fraction_blackout", fraction_blackout, list(map(lambda x : x.overload_in_network(24*60), d)))]
+    revenues = [(name, [s.revenue([])[0] for s in ss]) for (name, ss) in data]                #list(map(lambda x : x.revenue([])[0], d)))
+    average_delays = [(name, [s.average_delay() for s in ss]) for (name, ss) in data]
+    fraction_non_served = [(name, [s.non_served_vehicles_fraction() for s in ss]) for (name, ss) in data]
+    fraction_blackout = [(name, [s.overload_in_network(24*60) for s in ss]) for (name, ss) in data]
+
+    measures = [("revenue", revenues, (standard[0], [s.revenue([])[0] for s in standard[1]])),
+                ("average_delays", average_delays, (standard[0], [s.average_delay() for s in standard[1]])),
+                ("fraction_non_served",fraction_non_served, (standard[0], [s.non_served_vehicles_fraction() for s in standard[1]])),
+                ("fraction_blackout", fraction_blackout, (standard[0], [s.overload_in_network(24*60) for s in standard[1]])  )
+                ]
 
     f = open("./results/confidence_intervals.txt", "w")
-    for name, m, s in measures:
-        f.write(name + "\n\n")
+    for n, m, s in measures:
+        f.write(n + "\n\n")
         f.write("Pairwise comparison\n\n")
         for x in all_pairwise_comparison(m, confidence):
             f.write(",".join(str(item) for item in x))
