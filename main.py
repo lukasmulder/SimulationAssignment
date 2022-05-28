@@ -86,8 +86,8 @@ def main(run_time, season, solar_locations, fname, strategy, verbose = False):
 solar_locations = [[],[6,7], [1,2,6,7]]
 strategies = [1,2,3,4]
 seasons = ["summer", "winter"]
-warm_up = 2 # number of days of warm_up
-run_time = 24*60*warm_up + 60*24*3
+warm_up = 0 # number of days of warm_up
+run_time = 24*60*warm_up + 60*24*2
 confidence = 0.95
 standard = "{}{}".format([], 1)
 
@@ -115,7 +115,7 @@ for strategy in strategies:
             if strategy == 1:
                 plot_load_over_time(merge_statistics(statistics[:7]), solar_location, "load_over_time") #plot one figure to show the warm_up of two days is okay.
 
-compute_statistics(all_statistics, all_statistics[standard], confidence)
+compute_statistics(all_statistics, (standard, all_statistics[standard]), confidence)
 
 close_save_files()
 

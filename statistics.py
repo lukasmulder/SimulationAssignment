@@ -1,4 +1,3 @@
-from msilib import datasizemask
 from helper import convert_time_price, revenue
 import matplotlib.pyplot as plt
 import numpy as np, scipy.stats as st
@@ -261,11 +260,11 @@ def all_pairwise_comparison(data, confidence):
     k = len(data)
     number_of_intervals = int(k*(k-1)/2)
     intervals = [ [0]*k for i in range(k)]
-    
+
     for i in range(k):
         namei,datai = data[i]
         for j in range(k):
-            
+
             namej,dataj = data[j]
 
             intervals[i][j] = (namei + " vs "+namej,confidence_interval(datai,dataj,1- (1-confidence)/number_of_intervals))
@@ -276,11 +275,11 @@ def all_pairwise_comparison(data, confidence):
 def comparison_with_standard(standard, data, confidence):
     intervals = []
     namestandard, standarddata = standard
-    
+
     for i in range(len(data)):
         namecurrent, currentdata = data[i]
         intervals.append((namestandard+" vs "+namecurrent,confidence_interval(standarddata, currentdata, 1-(1-confidence)/(len(data)))))
-        
+
     return intervals
 
 
