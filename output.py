@@ -1,4 +1,4 @@
-from statistics import Statistics
+from statistics import Statistics, all_pairwise_comparison, comparison_with_standard
 
 def calculate_average_measures(statistics, run_time, warm_up, solar_locations):
     # returns:
@@ -207,3 +207,41 @@ def close_save_files():
         f = open("./results/" + path + ".tex", "a")
         f.write("\\end{tabular} \n\\end{table}")
         f.close()
+
+# takes all statistics from a run and computes:
+# - All pairwise combinations
+# - Comparison with a standard
+# - revenue
+# - average delay
+# - percentage of non-served vehicles
+# - percentage of time with blackout
+# - (inter-cable blackout percentage comparison)
+def compute_statistics(all_statistics, standard, confidence):
+    data = all_statistics.values()
+    revenues = []
+    average_delays = []
+    fraction_non_served = []
+    fraction_blackout = []
+    for d in data:
+        revenues.append(list(map(lambda x : x.revenue([])[0], d)))
+        average_delays.append(list(map(lambda x : x.average_delay(), d)))
+        fraction_non_served.append(list(map(lambda x : x.non_served_vehicles_fraction(), d)))
+        fraction_blackout.append(list(map(lambda x : x.overload_in_network(24*60), d)))
+
+    measures = [("revenue", revenues, list(map(lambda x : x.revenue([])[0], standard))),
+                ("average_delays", average_delays, list(map(lambda x : x.average_delay(), standard))),
+                ("fraction_non_served",fraction_non_served, list(map(lambda x : x.non_served_vehicles_fraction(), standard))),
+                ("fraction_blackout", fraction_blackout, list(map(lambda x : x.overload_in_network(24*60), d)))]
+
+    f = open("./results/confidence_intervals.txt", "w")
+    for name, m, s in measures:
+        f.write(name + "\n\n")
+        f.write("Pairwise comparison\n\n")
+        for x in all_pairwise_comparison(m, confidence):
+            f.write(",".join(str(item) for item in x))
+            f.write("\n")
+        f.write("Comparison with standard\n\n")
+        for x in comparison_with_standard(s, m, confidence):
+            f.write(",".join(str(item) for item in x))
+            f.write("\n")
+    f.close()

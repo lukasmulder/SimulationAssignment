@@ -242,20 +242,20 @@ def plot_load_over_time(statistics, solar_locations, fname) :
     plt.plot([x[0] for x in solar_over_t], [x[1] for x in solar_over_t])
     plt.xlabel("Time (minutes)")
     plt.ylabel("Load over main cable and solar load (kWh)")
-    plt.savefig('/home/lukas/Documents/UU/Optimization_for_Sustainability/Simulation_Assignment/results/figs/{}.pdf'.format(fname), bbox_inches='tight')
+    plt.savefig('/home/lukas/Documents/UU/Optimization_for_Sustainability/SimulationAssignment/results/figs/{}.pdf'.format(fname), bbox_inches='tight')
     plt.clf()
     # plt.show()
 
 def plot_solar_over_time(statistics, solar_locations):
     plt.plot([x[0] for x in statistics.solar_factor_over_time], [x[1]*200*len(solar_locations) for x in statistics.solar_factor_over_time])
     plt.show()
-    
+
 #calculates confidence interval of data1 - data 2 with confidence = confidence
 def confidence_interval(data1, data2, confidence):
     a = [x-y for x,y in zip(data1,data2)]
     interval = st.t.interval(confidence, len(a)-1, loc=np.mean(a), scale=st.sem(a))
     return interval
-    
+
 #retursn 2d list with index (index data 1, index data 2) and confidence interval
 def all_pairwise_comparison(data, confidence):
     k = len(data)
