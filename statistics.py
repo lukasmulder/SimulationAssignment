@@ -299,6 +299,7 @@ def plot_confidence_intervals(intervals, horizontal_line_width = 0.25, color = '
         
     plt.xticks(range(1,len(intervals)+1), names)
     plt.title("Confidence Intervals")
+    plt.show()
 
     
     
