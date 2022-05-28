@@ -86,37 +86,36 @@ def main(run_time, season, solar_locations, fname, strategy, verbose = False):
 solar_locations = [[],[6,7], [1,2,6,7]]
 strategies = [1,2,3,4]
 seasons = ["summer", "winter"]
-warm_up = 0 # number of days of warm_up
-run_time = 24*60*warm_up + 60*24*2
+warm_up = 2 # number of days of warm_up
+run_time = 24*60*warm_up + 60*24*3
+confidence = 0.95
+standard = "{}{}".format([], 1)
 
 t0 = time.time()
 
 prepare_save_files(run_time, warm_up)
+
+# dictionary with all the statistics.
+# keys formatted as "[solar locations]strategyseason?"
+all_statistics = {}
 
 for strategy in strategies:
     for solar_location in solar_locations:
         if solar_location != []:
             s_statistics = main(run_time, "summer", solar_location, "", strategy, verbose = False)
             w_statistics = main(run_time, "winter", solar_location, "", strategy, verbose = False)
+            all_statistics["{}{}summer".format(solar_location, strategy)] = s_statistics[warm_up:]
+            all_statistics["{}{}winter".format(solar_location, strategy)] = w_statistics[warm_up:]
             save_data(run_time, warm_up, s_statistics, w_statistics, solar_location, strategy)
 
-            # measures = calculate_average_measures(all_statistics, run_time, warm_up, solar_location)
-            # f.write("{}; {}; {}; {}; ".format(*measures))
-            # f.write("{} {} {}\n".format(solar_location, season, strategy))
-            # plot_load_over_time(merge_statistics(all_statistics), solar_location, "{} {} {}".format(solar_location, season, strategy))
         else:
-            all_statistics = main(run_time, "winter", solar_location, "", strategy, verbose = False) #season doesnt matter if there are no solar panels
-            save_data(run_time, warm_up, all_statistics, all_statistics, solar_location, strategy)
+            statistics = main(run_time, "winter", solar_location, "", strategy, verbose = False) #season doesnt matter if there are no solar panels
+            save_data(run_time, warm_up, statistics, statistics, solar_location, strategy)
+            all_statistics["{}{}".format(solar_location, strategy)] = statistics[warm_up:]
+            if strategy == 1:
+                plot_load_over_time(merge_statistics(statistics[:7]), solar_location, "load_over_time") #plot one figure to show the warm_up of two days is okay.
 
-            # measures = calculate_average_measures(all_statistics, run_time, warm_up, solar_location)
-            # f.write("{}; {}; {}; {}; ".format(*measures))
-            # f.write("base {}\n".format(strategy))
-            # plot_load_over_time(merge_statistics(all_statistics), solar_location, "base {}".format(strategy))
-
-#all_statistics = main(run_time, "summer", solar_locations[2], "./results/test", 1, verbose = False)
-#statistic = merge_statistics(all_statistics)
-#measures = calculate_average_measures(all_statistics, run_time, warm_up, solar_locations[0])
-#f.write("{}; {}; {}; {}; ".format(*measures))
+compute_statistics(all_statistics, all_statistics[standard], confidence)
 
 close_save_files()
 

@@ -1,8 +1,0 @@
-average_solar_revenue.csv
-run time: 2880, warm up: 0
-Number of \\ solar panels&0& & &2& & &4& & \\ \hline 
-Season or average & S & W & A & S & W & A & S & W & A \\ \hline 
-Base& nan& nan& nan& nan& nan& nan& nan& nan& nan \\ 
-Price driven& nan& nan& nan& nan& nan& nan& nan& nan& nan \\ 
-FCFS& nan& nan& nan& nan& nan& nan& nan& nan& nan \\ 
-ELFS& nan& nan& nan& nan& nan& nan& nan& nan& nan \\ 
