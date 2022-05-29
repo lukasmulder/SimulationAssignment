@@ -1,14 +1,16 @@
 from statistics import *
 from output import *
+import matplotlib.pyplot as plt
 
 def plot_all_cable_loads(statistics, fname):
-    # days = statistics.day
-    # x = range(0, days * 24 * 60)
-    plt.axhline(y=200, color='r', linestyle='--')
-    plt.axhline(y=220, color='r', linestyle='--')
-    plt.axhline(y=1000, color='y', linestyle='--')
-    plt.axhline(y=1100, color='y', linestyle='--')
-    # plt.fill_between(x, 200, 220)
+    days = statistics.day
+    x = range(0, days * 24 * 60)
+    plt.axhline(y=200, color='gray', linestyle='--')
+    # plt.axhline(y=220, color='r', linestyle='--')
+    plt.axhline(y=1000, color='gray', linestyle='--')
+    # plt.axhline(y=1100, color='y', linestyle='--')
+    plt.fill_between(x, 200, 220,color='gray', alpha=0.2)
+    plt.fill_between(x, 1000, 1100,color='gray', alpha=0.2)
 
     for cable, load_over_t in statistics.load_over_time.items():
         label = "cable " + str(cable) if cable != 9 else "main cable"

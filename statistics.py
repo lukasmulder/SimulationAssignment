@@ -300,7 +300,7 @@ def plot_confidence_intervals(intervals_list, horizontal_line_width = 0.25, colo
             plt.plot([left, right], [top, top], color=color)
             plt.plot([left, right], [bottom, bottom], color=color)
             plt.plot(x, mean, 'o', color='#f44336')
-
+            
         plt.xticks(range(1,len(intervals)+1), names)
         plt.title(str(intervals_list[i][0]))
     plt.show()
