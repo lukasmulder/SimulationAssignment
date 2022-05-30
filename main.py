@@ -85,9 +85,9 @@ def main(run_time, season, solar_locations, fname, strategy, verbose = False):
     return all_statistics
 
 solar_locations = [[],[6,7], [1,2,6,7]]
-strategies = [1,2,3,4]
+strategies = [1]
 seasons = ["summer", "winter"]
-warm_up = 0 # number of days of warm_up
+warm_up = 1 # number of days of warm_up
 run_time = 24*60*warm_up + 60*24*2
 confidence = 0.95
 standard = "{}{}".format([], 1)
@@ -121,7 +121,7 @@ compute_statistics(all_statistics, (standard, all_statistics[standard]), confide
 close_save_files()
 
 # statistics = main(run_time, "winter", [], "", 1, verbose = False) #season doesnt matter if there are no solar panels
-# plot_all_cable_loads(merge_statistics(statistics),  None)
+plot_all_cable_loads(merge_statistics(statistics),  None)
 
 t1 = time.time()
 print("total time: {} seconds".format(t1-t0))

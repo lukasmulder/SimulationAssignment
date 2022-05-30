@@ -241,9 +241,9 @@ def plot_load_over_time(statistics, solar_locations, fname) :
     plt.plot([x[0] for x in solar_over_t], [x[1] for x in solar_over_t])
     plt.xlabel("Time (minutes)")
     plt.ylabel("Load over main cable and solar load (kWh)")
-    plt.savefig('/home/lukas/Documents/UU/Optimization_for_Sustainability/SimulationAssignment/results/figs/{}.pdf'.format(fname), bbox_inches='tight')
+    # plt.savefig('/home/lukas/Documents/UU/Optimization_for_Sustainability/SimulationAssignment/results/figs/{}.pdf'.format(fname), bbox_inches='tight')
     plt.clf()
-    # plt.show()
+    plt.show()
 
 def plot_solar_over_time(statistics, solar_locations):
     plt.plot([x[0] for x in statistics.solar_factor_over_time], [x[1]*200*len(solar_locations) for x in statistics.solar_factor_over_time])
