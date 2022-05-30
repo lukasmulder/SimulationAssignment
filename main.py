@@ -85,12 +85,14 @@ def main(run_time, season, solar_locations, fname, strategy, verbose = False):
     return all_statistics
 
 solar_locations = [[],[6,7], [1,2,6,7]]
-strategies = [1]
+strategies = [1,2,3,4]
 seasons = ["summer", "winter"]
-warm_up = 1 # number of days of warm_up
-run_time = 24*60*warm_up + 60*24*2
+warm_up = 2 # number of days of warm_up
+run_time = 24*60*warm_up + 60*24*60
 confidence = 0.95
-standard = "{}{}".format([], 1)
+standard = "solar: {} strat: {} summer".format(solar_locations[2], 4)
+standard3 = "solar: {} strat: {}".format(solar_locations[0], 3)
+standard4 = "solar: {} strat: {}".format(solar_locations[0], 4)
 
 t0 = time.time()
 
@@ -105,23 +107,32 @@ for strategy in strategies:
         if solar_location != []:
             s_statistics = main(run_time, "summer", solar_location, "", strategy, verbose = False)
             w_statistics = main(run_time, "winter", solar_location, "", strategy, verbose = False)
-            all_statistics["{}{}summer".format(solar_location, strategy)] = s_statistics[warm_up:]
-            all_statistics["{}{}winter".format(solar_location, strategy)] = w_statistics[warm_up:]
+            all_statistics["solar: {} strat: {} summer".format(solar_location, strategy)] = s_statistics[warm_up:]
+            all_statistics["solar: {} strat: {} winter".format(solar_location, strategy)] = w_statistics[warm_up:]
             save_data(run_time, warm_up, s_statistics, w_statistics, solar_location, strategy)
 
         else:
             statistics = main(run_time, "winter", solar_location, "", strategy, verbose = False) #season doesnt matter if there are no solar panels
             save_data(run_time, warm_up, statistics, statistics, solar_location, strategy)
-            all_statistics["{}{}".format(solar_location, strategy)] = statistics[warm_up:]
+            all_statistics["solar: {} strat: {}".format(solar_location, strategy)] = statistics[warm_up:]
             if strategy == 1:
                 plot_load_over_time(merge_statistics(statistics[:7]), solar_location, "load_over_time") #plot one figure to show the warm_up of two days is okay.
 
-compute_statistics(all_statistics, (standard, all_statistics[standard]), confidence)
+
+compute_statistics(all_statistics,
+                   (standard,  all_statistics[standard]),
+                   (standard3, all_statistics[standard3]),
+                   (standard4, all_statistics[standard4]),
+                   confidence)
+
+for name, statistics in all_statistics.items():
+    plot_all_cable_loads(merge_statistics(statistics[-7:]),  "All_cable_loads_{}".format(name)) # plot the cable loads for the last 7 days for all simulations.
+
 
 close_save_files()
 
 # statistics = main(run_time, "winter", [], "", 1, verbose = False) #season doesnt matter if there are no solar panels
-plot_all_cable_loads(merge_statistics(statistics),  None)
+# plot_all_cable_loads(merge_statistics(statistics),  None)
 
 t1 = time.time()
 print("total time: {} seconds".format(t1-t0))

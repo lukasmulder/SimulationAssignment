@@ -20,16 +20,15 @@ def plot_all_cable_loads(statistics, fname):
     plt.xlabel("Time (minutes)")
     plt.ylabel("Load over main cable and solar load (kWh)")
     plt.legend()
-    #plt.savefig('/home/lukas/Documents/UU/Optimization_for_Sustainability/SimulationAssignment/results/figs/{}.pdf'.format(fname), bbox_inches='tight')
-    plt.show()
-    
+    plt.savefig('./results/figs/{}.pdf'.format(fname), bbox_inches='tight')
+    plt.clf()
+
 def plot_main_cable(statistics,fname):
     days = statistics.day
     x = range(0, days * 24 * 60)
     plt.axhline(y=1000, color='gray', linestyle='--')
     plt.fill_between(x, 1000, 1100,color='gray', alpha=0.2)
-    
+
     _, load_over_t = statistics.load_over_time.items()[8]
     label = "main cable"
     plt.plot([x[0] for x in load_over_t], [x[1] for x in load_over_t], label = label)
-    

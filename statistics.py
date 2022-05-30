@@ -231,19 +231,15 @@ def dump_load_over_time(statistics):
         f.write("\n")
 
 def plot_load_over_time(statistics, solar_locations, fname) :
-    # for loc, load_over_time in statistics.load_over_time.items():
-    #     plt.subplot(2,5,loc + 1)
-    #     plt.plot([x[0] for x in load_over_time], [x[1] for x in load_over_time])
     load_over_t = statistics.load_over_time[9]
     solar_over_t = statistics.solar_over_time(solar_locations)
 
     plt.plot([x[0] for x in load_over_t], [x[1] for x in load_over_t])
-    plt.plot([x[0] for x in solar_over_t], [x[1] for x in solar_over_t])
+    #plt.plot([x[0] for x in solar_over_t], [x[1] for x in solar_over_t])
     plt.xlabel("Time (minutes)")
-    plt.ylabel("Load over main cable and solar load (kWh)")
-    # plt.savefig('/home/lukas/Documents/UU/Optimization_for_Sustainability/SimulationAssignment/results/figs/{}.pdf'.format(fname), bbox_inches='tight')
+    plt.ylabel("Load over main cable (kWh)")
+    plt.savefig('./results/figs/{}.pdf'.format(fname), bbox_inches='tight')
     plt.clf()
-    plt.show()
 
 def plot_solar_over_time(statistics, solar_locations):
     plt.plot([x[0] for x in statistics.solar_factor_over_time], [x[1]*200*len(solar_locations) for x in statistics.solar_factor_over_time])
@@ -282,11 +278,10 @@ def comparison_with_standard(standard, data, confidence):
 
     return intervals
 
-def plot_confidence_intervals(intervals_list, horizontal_line_width = 0.25, color = '#2187bb'):
+def plot_confidence_intervals(intervals_list, standard = None, horizontal_line_width = 0.25, color = '#2187bb'):
     num_of_plots = len(intervals_list)
     for i in range(num_of_plots):
         intervals = intervals_list[i][1]
-        plt.subplot(1,num_of_plots,i+1)
         x = 0
         names = []
         for name, interval in intervals:
@@ -300,7 +295,12 @@ def plot_confidence_intervals(intervals_list, horizontal_line_width = 0.25, colo
             plt.plot([left, right], [top, top], color=color)
             plt.plot([left, right], [bottom, bottom], color=color)
             plt.plot(x, mean, 'o', color='#f44336')
-            
-        plt.xticks(range(1,len(intervals)+1), names)
-        plt.title(str(intervals_list[i][0]))
-    plt.show()
+
+        plt.xticks(range(1,len(intervals)+1), names, rotation = "vertical")
+        if standard != None:
+            title = str(intervals_list[i][0]).replace("_", " ") + " compared to " + standard[0]
+        else:
+            title = "All pairwise comparisons for blackouts"
+        plt.title(title)
+        plt.savefig('./results/figs/condfidence_intervals_for_{}.pdf'.format(title), bbox_inches='tight')
+        plt.clf()

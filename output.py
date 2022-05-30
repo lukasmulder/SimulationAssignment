@@ -216,7 +216,7 @@ def close_save_files():
 # - percentage of non-served vehicles
 # - percentage of time with blackout
 # - (inter-cable blackout percentage comparison)
-def compute_statistics(all_statistics, standard, confidence):
+def compute_statistics(all_statistics, standard, standard3, standard4, confidence):
     data = all_statistics.items()
 
     revenues = [(name, [s.revenue([])[0] for s in ss]) for (name, ss) in data]                #list(map(lambda x : x.revenue([])[0], d)))
@@ -234,7 +234,7 @@ def compute_statistics(all_statistics, standard, confidence):
 
     f = open("./results/confidence_intervals.txt", "w")
     for n, m, s in measures:
-        f.write(n + "\n\n")
+        f.write("\n\n" + n + "\n\n")
         f.write("Pairwise comparison\n\n")
         for x in all_pairwise_comparison(m, confidence):
             f.write(",".join(str(item) for item in x))
@@ -245,5 +245,21 @@ def compute_statistics(all_statistics, standard, confidence):
             f.write("\n")
         intervals = comparison_with_standard(s, m, confidence)
         intervals_list.append((n, intervals))
-    plot_confidence_intervals(intervals_list)
+
+
     f.close()
+
+    scenarios3 = ["solar: {} strat: {} {}".format(solar_location, 3, season) for solar_location in [[],[6,7], [1,2,6,7]] for season in ["summer", "winter"]]
+    scenarios4 = ["solar: {} strat: {} {}".format(solar_location, 4, season) for solar_location in [[],[6,7], [1,2,6,7]] for season in ["summer", "winter"]]
+
+    fraction_blackout_filtered3 = list(filter(lambda x : x[0] in scenarios3, fraction_blackout))
+    fraction_blackout_filtered4 = list(filter(lambda x : x[0] in scenarios4, fraction_blackout))
+
+    intervals3 = comparison_with_standard((standard3[0], [s.overload_in_network(24*60) for s in standard3[1]]) ,fraction_blackout_filtered3, confidence )
+    intervals4 = comparison_with_standard((standard4[0], [s.overload_in_network(24*60) for s in standard4[1]]) ,fraction_blackout_filtered4, confidence )
+
+
+    plot_ _intervals([ ("fraction_blackout_FCFS",  intervals3) ], standard3)
+    plot_confidence_intervals([ ("fraction_blackout_ELFS",  intervals4) ], standard4)
+
+    plot_confidence_intervals(intervals_list, standard)
