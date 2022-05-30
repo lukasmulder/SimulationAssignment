@@ -259,7 +259,7 @@ def compute_statistics(all_statistics, standard, standard3, standard4, confidenc
     intervals4 = comparison_with_standard((standard4[0], [s.overload_in_network(24*60) for s in standard4[1]]) ,fraction_blackout_filtered4, confidence )
 
 
-    plot_ _intervals([ ("fraction_blackout_FCFS",  intervals3) ], standard3)
+    plot_confidence_intervals([ ("fraction_blackout_FCFS",  intervals3) ], standard3)
     plot_confidence_intervals([ ("fraction_blackout_ELFS",  intervals4) ], standard4)
 
     plot_confidence_intervals(intervals_list, standard)
