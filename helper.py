@@ -5,6 +5,8 @@ from numpy.random import choice
 from pandas import read_csv
 from state import update_flow, find_parents
 
+random.seed(24)
+
 def import_from_csv(filename):
     #extracts second column from csv file and returns a list of floats
     data = read_csv(filename, sep = ";")

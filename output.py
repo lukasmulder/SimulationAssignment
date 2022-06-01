@@ -216,41 +216,70 @@ def close_save_files():
 # - percentage of non-served vehicles
 # - percentage of time with blackout
 # - (inter-cable blackout percentage comparison)
-def compute_statistics(all_statistics, standard, standard3, standard4, confidence):
+def compute_statistics(all_statistics, standardsummer, standardwinter, standard3, standard4, confidence):
+
+    standards = (standardsummer,  all_statistics[standardsummer])
+    standardw = (standardwinter,  all_statistics[standardwinter])
+
+    scenariossummer = ["{}{}{}".format(solar_location, strategy, "summer") for solar_location in [[],[6,7], [1,2,6,7]] for strategy in [3,4]]
+    scenarioswinter = ["{}{}{}".format(solar_location, strategy, "winter") for solar_location in [[],[6,7], [1,2,6,7]] for strategy in [3,4]]
+
+    scenariossummer.remove(standardsummer)
+    scenarioswinter.remove(standardwinter)
+
     data = all_statistics.items()
 
-    revenues = [(name, [s.revenue([])[0] for s in ss]) for (name, ss) in data]                #list(map(lambda x : x.revenue([])[0], d)))
+    revenues = [(name, [s.revenue([])[0] for s in ss]) for (name, ss) in data]
     average_delays = [(name, [s.average_delay() for s in ss]) for (name, ss) in data]
     fraction_non_served = [(name, [s.non_served_vehicles_fraction() for s in ss]) for (name, ss) in data]
     fraction_blackout = [(name, [s.overload_in_network(24*60) for s in ss]) for (name, ss) in data]
 
-    measures = [("revenue", revenues, (standard[0], [s.revenue([])[0] for s in standard[1]])),
-                ("average_delays", average_delays, (standard[0], [s.average_delay() for s in standard[1]])),
-                ("fraction_non_served",fraction_non_served, (standard[0], [s.non_served_vehicles_fraction() for s in standard[1]])),
-                ("fraction_blackout", fraction_blackout, (standard[0], [s.overload_in_network(24*60) for s in standard[1]])  )
-                ]
+    measures = [("revenue", revenues, (standards[0], [s.revenue([])[0] for s in standards[1]]),  (standardw[0], [s.revenue([])[0] for s in standardw[1]]) ),
+                ("average_delays", average_delays, (standards[0], [s.average_delay() for s in standards[1]]), (standardw[0], [s.average_delay() for s in standardw[1]]) ),
+                ("fraction_non_served",fraction_non_served, (standards[0], [s.non_served_vehicles_fraction() for s in standards[1]]), (standardw[0], [s.non_served_vehicles_fraction() for s in standardw[1]])  )]
+                # ("fraction_blackout", fraction_blackout, (standard[0], [s.overload_in_network(24*60) for s in standard[1]])  )
+                # ]
 
-    intervals_list = []
+    intervals_list_summer = []
+    intervals_list_winter = []
 
-    f = open("./results/confidence_intervals.txt", "w")
-    for n, m, s in measures:
-        f.write("\n\n" + n + "\n\n")
-        f.write("Pairwise comparison\n\n")
-        for x in all_pairwise_comparison(m, confidence):
-            f.write(",".join(str(item) for item in x))
-            f.write("\n")
-        f.write("Comparison with standard\n\n")
-        for x in comparison_with_standard(s, m, confidence):
-            f.write(",".join(str(item) for item in x))
-            f.write("\n")
-        intervals = comparison_with_standard(s, m, confidence)
-        intervals_list.append((n, intervals))
+    # save condfidence intervals in a txt file.
+    # f = open("./results/confidence_intervals.txt", "w")
+    # for n, m, s in measures:
+    #     f.write("\n\n" + n + "\n\n")
+    #     f.write("Pairwise comparison\n\n")
+    #     for x in all_pairwise_comparison(m, confidence):
+    #         f.write(",".join(str(item) for item in x))
+    #         f.write("\n")
+    #     f.write("Comparison with standard\n\n")
+    #     for x in comparison_with_standard(s, m, confidence):
+    #         f.write(",".join(str(item) for item in x))
+    #         f.write("\n")
+    # f.close()
+
+    # save confidence intervals in a figure.
 
 
-    f.close()
+    # make confidence intervals for first reserach question.
+    for n, m, ss, ws in measures:
+        mfilteredsummer = list(filter(lambda x : x[0] in scenariossummer, m))
+        mfilteredwinter = list(filter(lambda x : x[0] in scenarioswinter, m))
+        intervalssummer = comparison_with_standard(ss, mfilteredsummer, confidence)
+        intervalswinter = comparison_with_standard(ws, mfilteredwinter, confidence)
+        intervals_list_summer.append((n+" summer", intervalssummer))
+        intervals_list_winter.append((n+" winter", intervalswinter))
 
-    scenarios3 = ["solar: {} strat: {} {}".format(solar_location, 3, season) for solar_location in [[],[6,7], [1,2,6,7]] for season in ["summer", "winter"]]
-    scenarios4 = ["solar: {} strat: {} {}".format(solar_location, 4, season) for solar_location in [[],[6,7], [1,2,6,7]] for season in ["summer", "winter"]]
+    plot_confidence_intervals(intervals_list_summer, standards)
+    plot_confidence_intervals(intervals_list_winter, standardw)
+
+    # make plots for second research question.
+    scenarios3 = ["{}{}{}".format(solar_location, 3, season) for solar_location in [[],[6,7], [1,2,6,7]] for season in ["summer", "winter"]]
+    scenarios4 = ["{}{}{}".format(solar_location, 4, season) for solar_location in [[],[6,7], [1,2,6,7]] for season in ["summer", "winter"]]
+
+    scenarios3.remove("{}{}{}".format([], 3, "summer"))
+    scenarios3.remove("{}{}{}".format([], 3, "winter"))
+    scenarios4.remove("{}{}{}".format([], 4, "summer"))
+    scenarios4.remove("{}{}{}".format([], 4, "winter"))
 
     fraction_blackout_filtered3 = list(filter(lambda x : x[0] in scenarios3, fraction_blackout))
     fraction_blackout_filtered4 = list(filter(lambda x : x[0] in scenarios4, fraction_blackout))
@@ -261,5 +290,3 @@ def compute_statistics(all_statistics, standard, standard3, standard4, confidenc
 
     plot_confidence_intervals([ ("fraction_blackout_FCFS",  intervals3) ], standard3)
     plot_confidence_intervals([ ("fraction_blackout_ELFS",  intervals4) ], standard4)
-
-    plot_confidence_intervals(intervals_list, standard)

@@ -286,7 +286,7 @@ def plot_confidence_intervals(intervals_list, standard = None, horizontal_line_w
         names = []
         for name, interval in intervals:
             x += 1
-            names.append(name)
+            names.append(rewrite_key(name)[1])
             bottom,top = interval
             mean = bottom+(top-bottom)/2
             left = x - horizontal_line_width / 2
@@ -296,11 +296,38 @@ def plot_confidence_intervals(intervals_list, standard = None, horizontal_line_w
             plt.plot([left, right], [bottom, bottom], color=color)
             plt.plot(x, mean, 'o', color='#f44336')
 
-        plt.xticks(range(1,len(intervals)+1), names, rotation = "vertical")
+        plt.xticks(range(1,len(intervals)+1), names, rotation=45, ha="right")
         if standard != None:
-            title = str(intervals_list[i][0]).replace("_", " ") + " compared to " + standard[0]
+            title = str(intervals_list[i][0]).replace("_", " ") + "when compared to" + standard[0]
         else:
             title = "All pairwise comparisons for blackouts"
-        plt.title(title)
-        plt.savefig('./results/figs/condfidence_intervals_for_{}.pdf'.format(title), bbox_inches='tight')
+        plt.savefig('./results/figs/{}.pdf'.format(title), bbox_inches='tight')
         plt.clf()
+
+def rewrite_key(name):
+    namelist = name.split(" vs ")
+    firstname = namelist[0]
+    secondname = namelist[1]
+
+    output = []
+    for current in [firstname,secondname]:
+            splitfirst= current.split(']')
+
+            #solar
+            stringlist = splitfirst[0] +"]"
+            if len(stringlist) == 2:
+                solar = 0
+            else:
+                solar = len(stringlist.strip('][').split(','))
+
+            #start
+            strat = int(splitfirst[1][0])
+
+            #season
+            season = splitfirst[1][1]
+
+            output.append([solar,strat,season])
+
+    stringoutput = "("+str(output[0][0])+","+str(output[0][1])+","+output[0][2]+") vs ("+str(output[1][0])+","+str(output[1][1])+","+output[1][2]+")"
+
+    return output, stringoutput
