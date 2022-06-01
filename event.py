@@ -11,18 +11,18 @@ class Event:
         self.car = car
         self.flow = flow
 
-def print_event(event):
-    print(event.type, event.time)
+    def print_event(self):
+        print(self.type, self.time)
 
+#prints the entire eventqueue
 def print_eventQ(eventQ):
     for event in eventQ:
         print_event(event)
 
+# Insert event in eventQ, and keep it sorted assuming it is sorted.
+# If event an event has the same time as an event already in the eventQ,
+# insert it to the right of the rightmost event.
 def insert_event(event, eventQ):
-    """Insert event in eventQ, and keep it sorted assuming it is sorted.
-    If event an event has the same time as an event already in the eventQ,
-    insert it to the right of the rightmost event.
-    """
     low = 0
     high = len(eventQ)
 
@@ -34,9 +34,13 @@ def insert_event(event, eventQ):
             low = mid+1
     eventQ.insert(low, event)
 
+# event handler for arrival
 def arrival(event, eventQ, parking, cables, global_queue, solar, season, csv, statistics, strategy):
+    # get relevant variables
     current_time = event.time
     parkingchoices = chooseparking()
+
+    # try and find a free parking space
     for loc in parkingchoices:
         if parking[loc].capacity > len(parking[loc].cars):
             #if a parking lot is free, create the parking event
@@ -47,12 +51,15 @@ def arrival(event, eventQ, parking, cables, global_queue, solar, season, csv, st
 
             break
 
+    #updat statistics
     statistics.total_vehicles += 1
     statistics.non_served_vehicles += 1 # assume we can not serve the vehicle and then decrement it when we do serve it
 
+    # schedulde next event
     next_arrival_time = generate_arrival_time(current_time, csv)
     insert_event(Event(next_arrival_time, "arrival"), eventQ)
 
+# event handler for parking
 def parking(event, eventQ, parking, cables, global_queue, solar, season, csv, statistics, strategy):
     #get all relevant variables
     current_time = event.time
@@ -65,7 +72,8 @@ def parking(event, eventQ, parking, cables, global_queue, solar, season, csv, st
     #update the model
     parking[loc].cars.append(car)
 
-    #insert new event
+    # insert new event
+    # the way this is done depends on the strategy
     if strategy == 1: #base strategy
 
         event = Event(current_time, "start charging", loc = loc, car = car)
@@ -93,11 +101,7 @@ def parking(event, eventQ, parking, cables, global_queue, solar, season, csv, st
                 queue.put((latest_start_time,car))
                 global_queue.put((latest_start_time,car))
 
-
-
-
-
-
+# event handler for start charging
 def start_charging(event, eventQ, parking, cables, global_queue, solar, season, csv, statistics, strategy):
     #get all relevant variables
     current_time = event.time
@@ -115,6 +119,7 @@ def start_charging(event, eventQ, parking, cables, global_queue, solar, season, 
     #insert new event
     insert_event(Event(stop_time, "stop charging", loc = loc, car = car), eventQ)
 
+# event handler for stop charging
 def stop_charging(event, eventQ, parking, cables, global_queue, solar, season, csv, statistics, strategy):
     #get all relevant variables
     current_time = event.time
@@ -130,7 +135,7 @@ def stop_charging(event, eventQ, parking, cables, global_queue, solar, season, c
     event = Event(current_time, "finished charging", loc = loc, car = car) # this still assumes a vehicle charging is never interrupted
     insert_event(event, eventQ)
 
-    #schedule start charging for next car in queue
+    #schedule start charging for next car in queue, if this is necessary due to the strategy
     if strategy == 3 or strategy == 4:
         #queue = parking[loc].queue
         if not global_queue.empty():
@@ -148,7 +153,7 @@ def stop_charging(event, eventQ, parking, cables, global_queue, solar, season, c
                 #reinsert
                 global_queue.put((time,next_car))
 
-
+# event handler for finished charging
 def finished_charging(event, eventQ, parking, cables, global_queue, solar, season, csv, statistics, strategy):
     #get all relevant variables
     current_time = event.time
@@ -163,6 +168,7 @@ def finished_charging(event, eventQ, parking, cables, global_queue, solar, seaso
     event = Event(departure_time, "departure", loc = loc, car = car)
     insert_event(event, eventQ)
 
+# event handler for deparure
 def departure(event, eventQ, parking, cables, global_queue, solar, season, csv, statistics, strategy):
     current_time = event.time
     loc = event.loc
@@ -172,9 +178,7 @@ def departure(event, eventQ, parking, cables, global_queue, solar, season, csv, 
 
     parking[loc].cars.remove(car)
 
-def price_change(event, eventQ, parking, cables, global_queue, solar, season, csv, statistics, strategy):
-    pass
-
+# event handler for solar change
 def solar_change(event, eventQ, parking, cables, global_queue, solar, season, csv, statistics, strategy):
     current_time = event.time
     current_flow = event.flow
@@ -184,7 +188,7 @@ def solar_change(event, eventQ, parking, cables, global_queue, solar, season, cs
     update_solar(cables, parking, factor * 200, current_flow)
     update_solar_statistics(current_time, statistics, factor)
 
-    #schedule start charging for next car in queue
+    # schedule start charging for next car in queue if possible
     if strategy == 3 or strategy == 4:
         #queue = parking[loc].queue
         if not global_queue.empty():
@@ -218,6 +222,7 @@ event_handler_dictionary = {
     "solar change"      : solar_change
 }
 
+# selects the correct event handler depending on the type of the event given.
 def event_handler(event, eventQ, parking, cables, global_queue, solar, season, csv, statistics, strategy):
     event_handler_dictionary[event.type](event,
                                          eventQ,

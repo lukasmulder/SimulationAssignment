@@ -5,8 +5,7 @@ from numpy.random import choice
 from pandas import read_csv
 from state import update_flow, find_parents
 
-random.seed(24)
-
+# reads in a csv file
 def import_from_csv(filename):
     #extracts second column from csv file and returns a list of floats
     data = read_csv(filename, sep = ";")
@@ -15,6 +14,7 @@ def import_from_csv(filename):
 
     return list(map(float, info))
 
+# generates the next arrival time of a car
 def generate_arrival_time(current_time, csv):
     time_hour = int(current_time/60 % 24)
     time_minute = current_time % 60
@@ -35,6 +35,7 @@ def generate_arrival_time(current_time, csv):
 
     return (int(current_time/60) + extra_hours) * 60 + time_minute + arrival_time
 
+# generates the charging volume and connection time using the csv files
 def generate_time(csv):
     #generates charging volume and connection time
     charging_volume = choice(range(102), size = 1, replace = False, p=normalize(csv["charging"]))[0] + random.random() #in kWh
@@ -49,15 +50,17 @@ def generate_time(csv):
 
     return charging_volume, connection_time
 
-def normalize(list): #normalize a list
+# normalize a list
+def normalize(list):
     summ = sum(list)
     return [i/summ for i in list]
 
+# generates 3 parking spaces that will be picked radnomly according to the distribution given.
 def chooseparking():
-    #generates 3 parking spaces that will be picked radnomly
     return choice([1,2,3,4,5,6,7], size = 3, replace = False, p=[0.15,0.15,0.15,0.2,0.15,0.1,0.1])
 
-def convert_time_price(time): #returns the price for a given time
+#returns the energy price for a given time
+def convert_time_price(time):
     time_hour = (time/60)%24
     if time_hour <8:
         return 16
@@ -81,29 +84,23 @@ def convert_time_intervalleft(time):
     else:
         return 24*60 - time_minutes
 
-
-def price_reduc_time(current_time, charging_volume, connection_time): #calculates starting time to minimize cost
-    #strategie is: als prijs naar boven gaat: nu beginnen, als prijs op tijd naar beneden gaat: wachtem
+#calculates starting time to minimize cost
+def price_reduc_time(current_time, charging_volume, connection_time):
+    #strategy is: if the price goes up: start now. Wait otherwise
     charging_time = charging_volume *10
     latest_start_time = current_time + connection_time - charging_time
     current_price = convert_time_price(current_time)
-    # print("\n\ncurrent time ", current_time)
-    # print("connectio time ", connection_time)
-    # print("current price ", current_price)
-    # print("charging time ", charging_time)
-    # print("latest start time ", latest_start_time)
-    # print(current_time, charging_volume, connection_time)
 
-    #als prijs omhoog gaat in toekomst
+    #if the price will rise in the future
     if current_price == 16 or current_price == 18 :
 
         start_time = current_time #start now
-    elif current_price == 20 or current_price == 22: #als prijs omlaag gaat
+    elif current_price == 20 or current_price == 22: #if the price goes down.
 
         #check if we can reach cheapest price at 00:00
         if latest_start_time -current_time >= 24*60 - (current_time%(24*60)):
             start_time = current_time + 24*60 - (current_time%(24*60))
-        else: #anders zo laat mogelijk beginnen
+        else: #otherwise start as late as possible
             start_time = latest_start_time
 
     return start_time
@@ -127,13 +124,14 @@ def possible_starttime(current_time, latest_start_time):
     possible_times.reverse()
     return possible_times
 
-#geeft het echte optimum start tijd om prijs teminimalizeren
+# geeft het echte optimum start tijd om prijs te minimalizeren
+# gives the actual optimal start time to minimuze price
 def good_price_reduc(current_time, charging_volume, connection_time):
     charging_time = charging_volume *10
     latest_start_time = current_time + connection_time - charging_time
     possible_times= possible_starttime(current_time, latest_start_time)
 
-    maxprice=100000
+    maxprice = 100000
     besttime = 0
     for start_time in possible_times:
         price = price_if_starttime(start_time, charging_time)
@@ -155,10 +153,6 @@ def price_if_starttime(start_time, charging_time):
         return current_price*interval_time_left/60 + price_if_starttime(start_time + interval_time_left, charging_time - interval_time_left)
     else:
         return current_price*charging_time/60
-
-def max_num_charging(loc):
-    maxlist = [11,11,11,12,9,6,6]
-    return maxlist[loc-1]
 
 # Function takes a parking spot and checks if the network becomes overloaded
 # if a flow change occurs at that parking spot.
@@ -185,5 +179,42 @@ def check_skip_line(cables,first_parking, later_parking, flow_change):
     update_flow(cables, later_parking, -flow_change) # remember to make the change undoneg
     return True
 
+# calculates the revenue corresponding to a load pattern at each time.
 def revenue(load_over_time):
     return list(map(lambda x : (x[0],x[1],convert_time_price(x[0])), load_over_time ) )
+
+# formats the keys into for better labels
+def rewrite_key(name):
+    namelist = name.split(" vs ")
+    firstname = namelist[0]
+    secondname = namelist[1]
+
+    output = []
+    for current in [firstname,secondname]:
+            splitfirst= current.split(']')
+
+            #solar
+            stringlist = splitfirst[0] +"]"
+            if len(stringlist) == 2:
+                solar = 0
+            else:
+                solar = len(stringlist.strip('][').split(','))
+
+            #start
+            strat = int(splitfirst[1][0])
+
+            #season
+            season = splitfirst[1][1]
+
+            output.append([solar,strat,season])
+
+    stringoutput = "("+str(output[0][0])+","+str(output[0][1])+","+output[0][2]+") vs ("+str(output[1][0])+","+str(output[1][1])+","+output[1][2]+")"
+
+    return output, stringoutput
+
+# formats a floating point to something that fits in a table.
+def format_float(x):
+    s = "{:.2f}".format(x)[0:6]
+    if s[-1] == '.':
+        s = s[:-1]
+    return s

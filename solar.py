@@ -32,6 +32,7 @@ class Solar:
         self.winter = list(map(lambda x : x[1], self.data))
         self.summer = list(map(lambda x : x[2], self.data))
 
+    # generates the next solar rate
     def generate(self, season, hour):
         if season == "summer":
             factor = stats.norm.rvs(self.summer[hour % 24], self.summer[hour % 24]*0.15)

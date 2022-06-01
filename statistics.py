@@ -36,6 +36,7 @@ class Statistics:
         self.maximum_dalay_time = 0
         self.cars_with_delay    = 0
 
+    # a lot of methods for computing the relevant statistics from the saved data.
     def non_served_vehicles_fraction(self):
         return self.non_served_vehicles/self.total_vehicles
 
@@ -155,7 +156,7 @@ class Statistics:
         return revenue, solar_revenue
 
 
-
+# functions for updating the statistics
 def update_parking_statistics(statistics, parking):
     for key, loc in parking.items():
         if statistics.parked_vehicles_maximum[key] < len(loc.cars):
@@ -178,6 +179,28 @@ def update_delay_statistics(statistics, current_time, car):
         statistics.maximum_dalay_time = max(delay, statistics.maximum_dalay_time)
         statistics.cars_with_delay += 1
 
+#takes a list of statistics and merges them, assuming they are ordered by time.
+def merge_statistics(statistics):
+    statistic = Statistics(len(statistics))
+    for s in statistics:
+        for loc, load_over_time in s.load_over_time.items():
+            statistic.load_over_time[loc] += load_over_time
+
+        statistic.solar_factor_over_time += s.solar_factor_over_time
+
+        for loc, parked_vehicles_maximum in s.parked_vehicles_maximum.items():
+            statistic.parked_vehicles_maximum[loc] = max(statistic.parked_vehicles_maximum[loc], parked_vehicles_maximum)
+
+        statistic.non_served_vehicles += s.non_served_vehicles
+        statistic.total_vehicles += s.total_vehicles
+
+        statistic.total_delay_time += s.total_delay_time
+        statistic.maximum_dalay_time = max(statistic.maximum_dalay_time, s.maximum_dalay_time)
+        statistic.cars_with_delay += s.cars_with_delay
+
+    return statistic
+
+# function that pretty prints the statistics to terminal for testing purposes
 def generate_report(run_time, state, statistics, season, solar_locations, strategy, fname):
     f = open(fname + " report.txt", 'w')
     if solar_locations != []:
@@ -222,29 +245,6 @@ def generate_report(run_time, state, statistics, season, solar_locations, strate
     f.write("average number of non-served vehicles per day: {}\n".format( statistics.non_served_vehicles_average(run_time)) )
     f.close()
 
-def dump_load_over_time(statistics):
-    f = open("./results/load_over_time.txt", "w")
-    for loc, load_over_time in statistics.load_over_time.items():
-        f.write("location: {}\n".format(loc))
-        for x in load_over_time:
-            f.write("{}; {}\n".format(x[0],x[1]))
-        f.write("\n")
-
-def plot_load_over_time(statistics, solar_locations, fname) :
-    load_over_t = statistics.load_over_time[9]
-    solar_over_t = statistics.solar_over_time(solar_locations)
-
-    plt.plot([x[0] for x in load_over_t], [x[1] for x in load_over_t])
-    #plt.plot([x[0] for x in solar_over_t], [x[1] for x in solar_over_t])
-    plt.xlabel("Time (minutes)")
-    plt.ylabel("Load over main cable (kWh)")
-    plt.savefig('./results/figs/{}.pdf'.format(fname), bbox_inches='tight')
-    plt.clf()
-
-def plot_solar_over_time(statistics, solar_locations):
-    plt.plot([x[0] for x in statistics.solar_factor_over_time], [x[1]*200*len(solar_locations) for x in statistics.solar_factor_over_time])
-    plt.show()
-
 #calculates confidence interval of data1 - data 2 with confidence = confidence
 def confidence_interval(data1, data2, confidence):
     a = [x-y for x,y in zip(data1,data2)]
@@ -277,57 +277,3 @@ def comparison_with_standard(standard, data, confidence):
         intervals.append((namestandard+" vs "+namecurrent,confidence_interval(standarddata, currentdata, 1-(1-confidence)/(len(data)))))
 
     return intervals
-
-def plot_confidence_intervals(intervals_list, standard = None, horizontal_line_width = 0.25, color = '#2187bb'):
-    num_of_plots = len(intervals_list)
-    for i in range(num_of_plots):
-        intervals = intervals_list[i][1]
-        x = 0
-        names = []
-        for name, interval in intervals:
-            x += 1
-            names.append(rewrite_key(name)[1])
-            bottom,top = interval
-            mean = bottom+(top-bottom)/2
-            left = x - horizontal_line_width / 2
-            right = x + horizontal_line_width / 2
-            plt.plot([x, x], [top, bottom], color=color)
-            plt.plot([left, right], [top, top], color=color)
-            plt.plot([left, right], [bottom, bottom], color=color)
-            plt.plot(x, mean, 'o', color='#f44336')
-
-        plt.xticks(range(1,len(intervals)+1), names, rotation=45, ha="right")
-        if standard != None:
-            title = str(intervals_list[i][0]).replace("_", " ") + "when compared to" + standard[0]
-        else:
-            title = "All pairwise comparisons for blackouts"
-        plt.savefig('./results/figs/{}.pdf'.format(title), bbox_inches='tight')
-        plt.clf()
-
-def rewrite_key(name):
-    namelist = name.split(" vs ")
-    firstname = namelist[0]
-    secondname = namelist[1]
-
-    output = []
-    for current in [firstname,secondname]:
-            splitfirst= current.split(']')
-
-            #solar
-            stringlist = splitfirst[0] +"]"
-            if len(stringlist) == 2:
-                solar = 0
-            else:
-                solar = len(stringlist.strip('][').split(','))
-
-            #start
-            strat = int(splitfirst[1][0])
-
-            #season
-            season = splitfirst[1][1]
-
-            output.append([solar,strat,season])
-
-    stringoutput = "("+str(output[0][0])+","+str(output[0][1])+","+output[0][2]+") vs ("+str(output[1][0])+","+str(output[1][1])+","+output[1][2]+")"
-
-    return output, stringoutput

@@ -51,6 +51,20 @@ class State:
 
         self.global_queue = PriorityQueue()
 
+    def print_state(self):
+        print("Parking (id, #cars, free, charging)")
+        for id, loc in self.parking.items():
+
+            free = loc.capacity - len(loc.cars)
+            charging = len(list(filter( lambda x: x.status == "charging", loc.cars)))
+
+            print(loc.id, len(loc.cars), free, charging)
+        print()
+        print("Cables (id, capacity, flow)")
+        for id, cable in self.cables.items():
+            print(cable.id, cable.capacity, cable.flow)
+        print("---------------------------------------")
+
 # If a demand change at a parking occurs, update_flow(parking, flow_change)
 # changes the flow through the network
 # Positive flow indicates flow from the transformer to the parking (demand)
@@ -66,6 +80,7 @@ def _update_flow(cables, cable_id, flow_change):
     if cable.parent_cable_id != None:
         _update_flow(cables, cable.parent_cable_id, flow_change)
 
+# helper function for updating model after a change in solar output
 def update_solar(cables, parking, new_flow, current_flow):
     solar_parking = list(filter(lambda x : parking[x].solar, parking)) # array of keys of all solar parking
     for loc in solar_parking:
@@ -77,24 +92,10 @@ def find_parents(cables, parking):
     return _find_parents(cables,parents)
 
 #helper function for find_parents
-def _find_parents(cables,parents):
+def _find_parents(cables, parents):
     cable = cables[parents[-1]]
     if cable.parent_cable_id != None:
         parents.append(cable.parent_cable_id)
         return _find_parents(cables,parents)
     else:
         return parents
-
-def print_state(state):
-    print("Parking (id, #cars, free, charging)")
-    for id, loc in state.parking.items():
-
-        free = loc.capacity - len(loc.cars)
-        charging = len(list(filter( lambda x: x.status == "charging", loc.cars)))
-
-        print(loc.id, len(loc.cars), free, charging)
-    print()
-    print("Cables (id, capacity, flow)")
-    for id, cable in state.cables.items():
-        print(cable.id, cable.capacity, cable.flow)
-    print("---------------------------------------")
